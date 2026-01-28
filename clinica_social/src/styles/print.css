@@ -1,0 +1,19 @@
+@media print {
+    @page { margin: 0; size: auto; }
+    body { 
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+        background-color: white !important;
+    }
+    .print-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .no-print { display: none !important; }
+    
+    /* Hide scrollbars in print */
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
