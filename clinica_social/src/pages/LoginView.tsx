@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { User } from '../types';
+import React, { useState, useEffect } from 'react';
+import { User, ClinicSettings } from '../types';
+import { api } from '../services/api';
 
 interface LoginViewProps {
   onLogin: (user: User) => void;
@@ -13,14 +14,25 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
+  const [clinicSettings, setClinicSettings] = useState<ClinicSettings | null>(null);
+
+  useEffect(() => {
+    api.settings.get()
+      .then(setClinicSettings)
+      .catch(console.error);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const user = await import('../services/api').then(m => m.api.login({ email: username, password }));
+      const user = await api.login({ email: username, password });
       onLogin(user);
     } catch (err: any) {
-      setError(err.message || 'Credenciais inválidas.');
+      if (err.response && err.response.status === 429) {
+        setError('Muitas tentativas incorretas. Por segurança, aguarde 1 minuto.');
+      } else {
+        setError(err.message || 'Credenciais inválidas.');
+      }
     }
   };
 
@@ -39,21 +51,23 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
       <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md border border-slate-100">
         <div className="text-center mb-8">
-          <div className="bg-primary w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
-            <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-            </svg>
-          </div>
+          {clinicSettings?.logo_url ? (
+            <img
+              src={clinicSettings.logo_url}
+              alt="Logo Clínica"
+              className="h-24 mx-auto mb-4 object-contain"
+            />
+          ) : (
+            <div className="bg-primary w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+              </svg>
+            </div>
+          )}
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Clínica Cuidar</h1>
           <p className="text-slate-500 mt-2">Acesso restrito para colaboradores</p>
         </div>
 
-        {/* Login Hints - Restored as requested */}
-        <div className="mb-6 bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 text-center">
-          <p className="font-bold mb-1">Credenciais de Acesso:</p>
-          <p>Admin: admin / admin123</p>
-          <p>Voluntário: voluntario / 123456</p>
-        </div>
 
         {showForgotPassword ? (
           <form onSubmit={handleForgotPassword} className="space-y-5">
@@ -143,6 +157,14 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
             </button>
           </form>
         )}
+
+
+        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <div className="flex justify-center gap-4 mb-2">
+            <a href="/politica-privacidade" className="text-xs text-slate-400 hover:text-green-600 underline transition-colors">Política de Privacidade</a>
+          </div>
+          <p className="text-xs text-slate-400">© 2026 Clínica Cuidar - Feito por Vitor Moraes</p>
+        </div>
       </div>
     </div>
   );

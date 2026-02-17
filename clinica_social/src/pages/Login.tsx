@@ -20,8 +20,12 @@ const Login: React.FC = () => {
         try {
             await signIn({ email, password });
             navigate('/volunteer-dashboard'); // Redirect to dashboard
-        } catch (err) {
-            setError('Falha no login. Verifique suas credenciais.');
+        } catch (err: any) {
+            if (err.response && err.response.status === 429) {
+                setError('Muitas tentativas incorretas. Por segurança, aguarde 1 minuto.');
+            } else {
+                setError('Falha no login. Verifique suas credenciais.');
+            }
         } finally {
             setLoading(false);
         }
@@ -77,7 +81,11 @@ const Login: React.FC = () => {
                     </form>
                 </div>
                 <div className="bg-slate-50 p-4 text-center">
-                    <p className="text-xs text-slate-400">© 2025 Clínica Cuidar - Gestão Inteligente</p>
+                    <div className="flex justify-center gap-4 mt-2">
+                        <a href="/politica-privacidade" className="text-xs text-slate-400 hover:text-green-600 underline">Política de Privacidade</a>
+                        {/* <a href="#" className="text-xs text-slate-400 hover:text-green-600 underline">Termos de Uso</a> */}
+                    </div>
+                    <p className="text-xs text-slate-400 mt-2">© 2026 Clínica Cuidar - Gestão Inteligente</p>
                 </div>
             </div>
         </div>

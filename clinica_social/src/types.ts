@@ -66,6 +66,10 @@ export interface Patient {
   guardian_name?: string;
   guardian_cpf?: string;
   guardian_phone?: string;
+
+  lgpd_consent?: boolean;
+  lgpd_consent_date?: string;
+  active?: boolean;
 }
 
 export interface Availability {
@@ -87,6 +91,9 @@ export interface Volunteer {
   photo?: string;
   files?: { name: string; content: string }[];
   active?: boolean;
+  appointment_duration?: number;
+  lgpd_consent?: boolean;
+  lgpd_consent_date?: string;
 }
 
 // Financial

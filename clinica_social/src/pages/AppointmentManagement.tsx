@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Appointment, Patient, Volunteer, AppointmentStatus, PaymentTable, PaymentMethod, TransactionType } from '../types';
 import PaymentModal from '../components/PaymentModal';
 import { api } from '../services/api';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths, parse, addHours, isBefore, startOfToday, isAfter } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths, parse, addHours, addMinutes, isBefore, startOfToday, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface AppointmentManagementProps {
@@ -90,6 +90,8 @@ const AppointmentManagement: React.FC<AppointmentManagementProps> = ({ appointme
       let end = parse(range.end, 'HH:mm', selectedDate);
       let current = start;
 
+      const duration = selectedVolunteer.appointment_duration || 60;
+
       while (isBefore(current, end)) {
         const timeStr = format(current, 'HH:mm');
 
@@ -108,7 +110,7 @@ const AppointmentManagement: React.FC<AppointmentManagementProps> = ({ appointme
           slots.push({ time: timeStr, status: 'available' });
         }
 
-        current = addHours(current, 1);
+        current = addMinutes(current, duration);
       }
     });
     return slots.sort((a, b) => a.time.localeCompare(b.time));

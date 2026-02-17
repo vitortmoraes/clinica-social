@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro de Vídeo COMPLETO - LGPD na Prática</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                font-size: 14pt;
+            }
+
+            .scene-box {
+                border: 1px solid #ccc;
+                background: #fff !important;
+            }
+        }
+
+        /* Teleprompter style readability */
+        p {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-8 print:p-0 print:bg-white font-sans text-slate-800">
+
+    <div class="max-w-4xl mx-auto bg-white p-12 shadow-xl print:shadow-none relative">
+
+        <!-- Print Button -->
+        <button onclick="window.print()"
+            class="no-print absolute top-8 right-8 bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 shadow-md transition-colors">
+            🖨️ Imprimir Roteiro
+        </button>
+
+        <header class="border-b-2 border-red-600 pb-6 mb-10 text-center">
+            <h1 class="text-3xl font-black text-slate-900 uppercase tracking-wide">Roteiro de Vídeo</h1>
+            <h2 class="text-xl text-red-600 font-bold mt-2">Adequando Clínica Social à LGPD do Zero</h2>
+            <p class="text-slate-500 text-sm mt-1 uppercase tracking-widest font-bold">Checklist Completo de Segurança
+            </p>
+        </header>
+
+        <div class="space-y-16">
+
+            <!-- Scene 0 -->
+            <section>
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">INTRO (0:00 - 1:30)</span>
+                    <h3 class="text-2xl font-bold text-slate-800">Introdução à LGPD</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Você aparecendo na câmera, fundo neutro ou com o sistema aberto na tela
+                    atrás.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "Antes de mostrar a prática, vamos alinhar o básico: <strong>O que é a LGPD?</strong><br>
+                        A Lei Geral de Proteção de Dados (13.709/2018) é a regra que diz que os dados pessoais (nome,
+                        CPF, foto) não são propriedade da empresa, e sim do cidadão.
+                    </p>
+                    <p>
+                        <strong>E quem precisa se preocupar com isso?</strong> Todo mundo!<br>
+                        Não importa se você é um banco, um e-commerce ou uma <strong>ONG</strong>. Se você coleta um
+                        nome e um telefone, você já é responsável por esses dados perante a lei.
+                    </p>
+                    <p>
+                        No caso de uma <strong>Clínica Social</strong>, a responsabilidade é crítica. Lidamos com
+                        <strong>Dados Sensíveis</strong> (saúde, doenças, renda). Um vazamento aqui pode destruir
+                        reputações e vidas.
+                    </p>
+                    <p>
+                        Por isso, hoje vou mostrar como transformamos um sistema simples em uma <strong>fortaleza de
+                            segurança</strong>, respeitando a lei do início ao fim."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 1 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">1:30 - 3:00</span>
+                    <h3 class="text-2xl font-bold text-slate-800">1. O Princípio do Consentimento</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Tela de Cadastro de Paciente focando no Checkbox "Li e concordo com os
+                    termos". Depois, mostrando a impressão do Termo.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "O primeiro passo da LGPD é o <strong>Consentimento</strong>. Não podemos coletar nada sem a
+                        permissão clara do titular.
+                    </p>
+                    <p>
+                        No nosso sistema, implementamos duas travas de segurança:<br>
+                        1. <strong>Digital:</strong> No cadastro, é obrigatório marcar que o paciente consentiu. Sem
+                        isso, o sistema nem salva.<br>
+                        2. <strong>Físico:</strong> Como muitos pacientes podem ser idosos ou não ter acesso digital,
+                        criamos um <strong>Gerador Automático de Termos</strong>. Com um clique, imprimimos um documento
+                        jurídico personalizado para o paciente assinar na recepção.
+                    </p>
+                    <p>
+                        Isso garante que a coleta de dados seja legal e transparente desde o primeiro 'Bom dia'."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 2 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">3:00 - 5:00</span>
+                    <h3 class="text-2xl font-bold text-slate-800">2. Minimização e Controle de Acesso</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Mostrando a diferença entre o login de um "Voluntário/Médico" e um
+                    "Staff/Recepção". Tentar acessar uma tela restrita e ser bloqueado.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "A LGPD fala sobre <strong>Minimização</strong> e <strong>Privilégio Mínimo</strong>. Ou seja:
+                        cada um só vê o que precisa para trabalhar.
+                    </p>
+                    <p>
+                        • A <strong>Recepção (Staff)</strong> precisa agendar? Sim. Mas ela precisa ler o prontuário
+                        médico ou saber a religião do paciente? Não. Por isso, <strong>bloqueamos</strong> o acesso a
+                        dados sensíveis para esse perfil.
+                    </p>
+                    <p>
+                        • Já o <strong>Médico Voluntário</strong> tem acesso total ao prontuário, mas apenas dos
+                        pacientes que ele atende.
+                    </p>
+                    <p>
+                        • E as telas críticas, como 'Gerenciar Usuários' ou 'Backups', são exclusivas do
+                        <strong>Administrador</strong>.
+                    </p>
+                    <p>
+                        Isso evita aquela curiosidade indevida e protege a privacidade do paciente dentro da própria
+                        clínica."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 3 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">5:00 - 7:00</span>
+                    <h3 class="text-2xl font-bold text-slate-800">3. Segurança Invisível: Criptografia</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Mostrar slide ou desenho de como o dado é salvo no Banco de Dados (texto
+                    embaralhado) vs. como aparece na tela.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "Agora vamos falar do que acontece 'nos bastidores'. E se um hacker invadir o servidor e roubar
+                        o banco de dados?
+                    </p>
+                    <p>
+                        Para isso, implementamos <strong>Criptografia em Nível de Aplicação</strong>.
+                        Dados críticos como <strong>CPF e Endereço</strong> são transformados em códigos ilegíveis antes
+                        de serem gravados no disco.
+                    </p>
+                    <p>
+                        Mesmo que alguém roube o arquivo do banco, não vai conseguir ler nada sem a chave de segurança
+                        que fica guardada separadamente. Até os nossos <strong>Backups</strong> (cópias de segurança) já
+                        nascem criptografados. Segurança camada sobre camada."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 4 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">7:00 - 8:30</span>
+                    <h3 class="text-2xl font-bold text-slate-800">4. Logs de Auditoria e Rastreabilidade</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Navegando na tela de "Relatórios > Logs de Auditoria". Filtrando por data
+                    ou usuário.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "Segurança também é saber 'quem fez o quê'. A LGPD exige rastreabilidade.
+                    </p>
+                    <p>
+                        Criamos um painel de <strong>Auditoria (Logs)</strong> que é como uma caixa-preta de avião.<br>
+                        • Quem criou essa ficha?<br>
+                        • Quem editou o telefone do paciente?<br>
+                        • Quem deletou aquele registro?
+                    </p>
+                    <p>
+                        O sistema grava: <strong>Usuário, Data, Hora, IP e exatamente o que mudou (Antes e
+                            Depois).</strong> Isso dá transparência total e protege a instituição caso haja alguma
+                        dúvida sobre o uso dos dados."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 5 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">8:30 - 10:00</span>
+                    <h3 class="text-2xl font-bold text-slate-800">5. Direitos do Titular (Esquecimento)</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Tela de "Configurações > Documentação Legal" e o botão de "Anonimizar
+                    Paciente".
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "E se o paciente quiser sair da clínica e pedir para apagar tudo? É o <strong>Direito ao
+                            Esquecimento</strong>.
+                    </p>
+                    <p>
+                        Implementamos uma função de <strong>Anonimização</strong>. Ao invés de deletar e quebrar o
+                        histórico estatístico da clínica, o sistema 'embaralha' os dados pessoais dele (vira Paciente
+                        X), mas mantém os dados numéricos para os relatórios de atendimento.
+                    </p>
+                    <p>
+                        E para fechar com chave de ouro, criamos uma área pública de transparência:<br>
+                        1. <strong>Política de Privacidade:</strong> Acessível no Login.<br>
+                        2. <strong>Relatório de Impacto (DPIA):</strong> Um documento técnico automático que mostra para
+                        a fiscalização todos os riscos que mitigamos.
+                    </p>
+                    <p>
+                        Tudo gerado dinamicamente pelo próprio sistema."
+                    </p>
+                </div>
+            </section>
+
+            <!-- Scene 6 -->
+            <section class="break-before-page">
+                <div class="flex items-center gap-3 mb-4 border-b border-slate-200 pb-2">
+                    <span class="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold">ENCERRAMENTO</span>
+                    <h3 class="text-2xl font-bold text-slate-800">Conclusão</h3>
+                </div>
+
+                <div
+                    class="scene-box bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6 text-base text-yellow-800 italic flex gap-2 items-start">
+                    🎥 <strong>CENA:</strong> Volta para você na câmera.
+                </div>
+
+                <div class="prose max-w-none text-slate-800 text-xl leading-relaxed pl-6 border-l-8 border-red-500">
+                    <p>
+                        "Adequar um sistema à LGPD não é só colocar um aviso de cookies. É pensar na arquitetura do
+                        software para garantir a dignidade e a segurança das pessoas.
+                    </p>
+                    <p>
+                        Com essas implementações, nossa Clínica Social não só cumpre a lei, mas mostra respeito por cada
+                        vida que atendemos.
+                    </p>
+                    <p>
+                        Se você gostou dessa jornada técnica, deixa o like e comenta aqui: qual desses recursos você
+                        acha mais difícil de implementar? Até a próxima!"
+                    </p>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -4,16 +4,20 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { api } from '../services/api';
+import ConsentPrint from './ConsentPrint';
+import SearchableSelect from '../components/molecules/SearchableSelect';
+import AuditLogViewer from '../components/AuditLogViewer';
 
 interface ReportsProps {
     patients: Patient[];
     volunteers: Volunteer[];
     appointments: Appointment[];
+    currentUser?: import('../types').User;
 }
 
-type ReportSection = 'patients' | 'volunteers' | 'appointments' | 'financial' | null;
+type ReportSection = 'patients' | 'volunteers' | 'appointments' | 'financial' | 'audit' | null;
 
-const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments }) => {
+const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments, currentUser }) => {
     const [openSection, setOpenSection] = useState<ReportSection>(null);
     const [settings, setSettings] = useState<ClinicSettings | null>(null);
 
@@ -24,11 +28,11 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
 
     // State for selected fields
     const [patientFields, setPatientFields] = useState({ name: true, phone: true, birth_date: true, address: false, history: false });
-    const [patientReportType, setPatientReportType] = useState<'all' | 'birthdays' | 'single'>('all');
+    const [patientReportType, setPatientReportType] = useState<'all' | 'birthdays' | 'single' | 'lgpd_term'>('all');
 
     // Volunteer State
     // Volunteer State
-    const [volunteerReportType, setVolunteerReportType] = useState<'all' | 'birthdays' | 'single' | 'specialty'>('all');
+    const [volunteerReportType, setVolunteerReportType] = useState<'all' | 'birthdays' | 'single' | 'specialty' | 'lgpd_term'>('all');
     const [selectedVolunteerId, setSelectedVolunteerId] = useState<string>('');
     const [volunteerFields, setVolunteerFields] = useState({ name: true, specialty: true, phone: true, email: false, availability: false, birth_date: true });
 
@@ -41,6 +45,11 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
     const [commFields, setCommFields] = useState({ date: true, patient: true, volunteer: true, status: true, notes: false });
     const [finFields, setFinFields] = useState({ date: true, type: true, amount: true, method: true, description: false });
 
+    // LGPD Report State
+    const [selectedLgpdPatientId, setSelectedLgpdPatientId] = useState<string>('');
+    const [showConsentPrint, setShowConsentPrint] = useState(false);
+    const [consentData, setConsentData] = useState<{ person: Patient | Volunteer, type: 'patient' | 'volunteer' } | null>(null);
+
     const toggleSection = (section: ReportSection) => {
         setOpenSection(openSection === section ? null : section);
     };
@@ -51,7 +60,10 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
             data = data.filter(p => {
                 if (!p.birth_date) return false;
                 if (selectedMonth === 'all') return true;
-                const month = parseInt(p.birth_date.split('-')[1]) - 1;
+                // birth_date is YYYY-MM-DD
+                const parts = p.birth_date.split('-');
+                if (parts.length !== 3) return false;
+                const month = parseInt(parts[1], 10) - 1; // 0-indexed
                 return month.toString() === selectedMonth;
             });
         } else if (patientReportType === 'single') {
@@ -66,7 +78,9 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
             data = data.filter(v => {
                 if (!v.birth_date) return false;
                 if (selectedMonth === 'all') return true;
-                const month = parseInt(v.birth_date.split('-')[1]) - 1;
+                const parts = v.birth_date.split('-');
+                if (parts.length !== 3) return false;
+                const month = parseInt(parts[1], 10) - 1;
                 return month.toString() === selectedMonth;
             });
         } else if (volunteerReportType === 'single') {
@@ -243,6 +257,19 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
     };
 
     const handleGenerateVolunteerReport = (format: 'pdf' | 'excel') => {
+        if (volunteerReportType === 'lgpd_term') {
+            if (!selectedVolunteerId) {
+                alert("Selecione um voluntário para gerar o termo.");
+                return;
+            }
+            const volunteer = volunteers.find(v => v.id === selectedVolunteerId);
+            if (volunteer) {
+                setConsentData({ person: volunteer, type: 'volunteer' });
+                setShowConsentPrint(true);
+            }
+            return;
+        }
+
         let data: any[] = [];
         let columns: { header: string, dataKey: string }[] = [];
         let title = '';
@@ -606,7 +633,24 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
         }
     };
 
+    const handlePrepareConsentPrint = () => {
+        // Legacy function, replaced by handleGeneratePatientReport with lgpd_term
+    };
+
     const handleGeneratePatientReport = (format: 'pdf' | 'excel') => {
+        if (patientReportType === 'lgpd_term') {
+            if (!selectedPatientId) {
+                alert("Selecione um paciente para gerar o termo.");
+                return;
+            }
+            const patient = patients.find(p => p.id === selectedPatientId);
+            if (patient) {
+                setConsentData({ person: patient, type: 'patient' });
+                setShowConsentPrint(true);
+            }
+            return;
+        }
+
         const data = getFilteredPatients();
         const title = `Relatório de Pacientes - ${patientReportType === 'all' ? 'Geral' : patientReportType === 'birthdays' ? 'Aniversariantes' : 'Individual'}`;
 
@@ -637,6 +681,8 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                 <h1 className="text-2xl font-bold text-slate-800">Relatórios</h1>
                 <p className="text-slate-500">Gere relatórios personalizados do sistema.</p>
             </div>
+
+
 
             {/* Relatórios de Pacientes */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -694,6 +740,20 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                                 />
                                 <span className="text-slate-700 font-medium">Paciente Específico</span>
                             </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="patientReportType"
+                                    value="lgpd_term"
+                                    checked={patientReportType === 'lgpd_term'}
+                                    onChange={() => {
+                                        setPatientReportType('lgpd_term');
+                                        setPatientFields({ ...patientFields }); // Reset specific fields if needed
+                                    }}
+                                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-slate-700 font-medium">Termo LGPD</span>
+                            </label>
                         </div>
 
                         {/* Filters based on Type */}
@@ -705,6 +765,7 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                                     onChange={(e) => setSelectedMonth(e.target.value)}
                                     className="w-full md:w-1/3 px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
                                 >
+                                    <option value="all">Todos os Meses</option>
                                     <option value="0">Janeiro</option>
                                     <option value="1">Fevereiro</option>
                                     <option value="2">Março</option>
@@ -721,46 +782,56 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                             </div>
                         )}
 
-                        {patientReportType === 'single' && (
+                        {(patientReportType === 'single' || patientReportType === 'lgpd_term') && (
                             <div className="mb-6 animate-in fade-in">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Selecione o Paciente</label>
-                                <select
+                                <SearchableSelect
+                                    options={patients.map(p => ({ id: p.id, label: p.name }))}
                                     value={selectedPatientId}
-                                    onChange={(e) => setSelectedPatientId(e.target.value)}
-                                    className="w-full md:w-1/2 px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-                                >
-                                    <option value="">Selecione...</option>
-                                    {patients.map(p => (
-                                        <option key={p.id} value={p.id}>{p.name}</option>
-                                    ))}
-                                </select>
+                                    onChange={(val) => setSelectedPatientId(val)}
+                                    placeholder="Digite para buscar o paciente..."
+                                    className="w-full md:w-1/2"
+                                />
                             </div>
                         )}
 
-                        <h4 className="font-semibold text-slate-700 mb-4">Selecione as colunas para o relatório:</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                            {Object.entries(patientFields).map(([key, val]) => (
-                                <label key={key} className="flex items-center gap-2 cursor-pointer p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 transition-colors">
-                                    <input type="checkbox" checked={val} onChange={() => setPatientFields({ ...patientFields, [key]: !val })} className="w-4 h-4 text-primary rounded focus:ring-primary" />
-                                    <span className="capitalize text-slate-700">
-                                        {key === 'name' ? 'Nome Completo' :
-                                            key === 'phone' ? 'Telefone' :
-                                                key === 'birth_date' ? 'Data de Nascimento' :
-                                                    key === 'address' ? 'Endereço' :
-                                                        key === 'history' ? 'Observações' : key}
-                                    </span>
-                                </label>
-                            ))}
-                        </div>
+                        {patientReportType !== 'lgpd_term' && (
+                            <>
+                                <h4 className="font-semibold text-slate-700 mb-4">Selecione as colunas para o relatório:</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                    {Object.entries(patientFields).map(([key, val]) => (
+                                        <label key={key} className="flex items-center gap-2 cursor-pointer p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 transition-colors">
+                                            <input type="checkbox" checked={val} onChange={() => setPatientFields({ ...patientFields, [key]: !val })} className="w-4 h-4 text-primary rounded focus:ring-primary" />
+                                            <span className="capitalize text-slate-700">
+                                                {key === 'name' ? 'Nome Completo' :
+                                                    key === 'phone' ? 'Telefone' :
+                                                        key === 'birth_date' ? 'Data de Nascimento' :
+                                                            key === 'address' ? 'Endereço' :
+                                                                key === 'history' ? 'Observações' : key}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                         <div className="flex justify-end gap-3">
-                            <button onClick={() => handleGeneratePatientReport('excel')} className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-xl hover:bg-green-100 transition-colors font-semibold">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                Excel
-                            </button>
-                            <button onClick={() => handleGeneratePatientReport('pdf')} className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors font-semibold">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                PDF
-                            </button>
+                            {patientReportType === 'lgpd_term' ? (
+                                <button onClick={() => handleGeneratePatientReport('pdf')} className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition-colors font-bold shadow-lg shadow-purple-200">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                    Gerar Termo de Consentimento
+                                </button>
+                            ) : (
+                                <>
+                                    <button onClick={() => handleGeneratePatientReport('excel')} className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-xl hover:bg-green-100 transition-colors font-semibold">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        Excel
+                                    </button>
+                                    <button onClick={() => handleGeneratePatientReport('pdf')} className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors font-semibold">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        PDF
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}
@@ -832,6 +903,17 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                                 />
                                 <span className="text-slate-700 font-medium">Por Especialidade (Qtd)</span>
                             </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="volunteerReportType"
+                                    value="lgpd_term"
+                                    checked={volunteerReportType === 'lgpd_term'}
+                                    onChange={() => setVolunteerReportType('lgpd_term')}
+                                    className="w-4 h-4 text-green-600 focus:ring-green-500"
+                                />
+                                <span className="text-slate-700 font-medium">Termo LGPD</span>
+                            </label>
                         </div>
 
                         {/* Filters based on Type */}
@@ -860,23 +942,20 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                             </div>
                         )}
 
-                        {volunteerReportType === 'single' && (
+                        {(volunteerReportType === 'single' || volunteerReportType === 'lgpd_term') && (
                             <div className="mb-6 animate-in fade-in">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Selecione o Voluntário</label>
-                                <select
+                                <SearchableSelect
+                                    options={volunteers.map(v => ({ id: v.id, label: v.name }))}
                                     value={selectedVolunteerId}
-                                    onChange={(e) => setSelectedVolunteerId(e.target.value)}
-                                    className="w-full md:w-1/2 px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-500 outline-none"
-                                >
-                                    <option value="">Selecione...</option>
-                                    {volunteers.map(v => (
-                                        <option key={v.id} value={v.id}>{v.name}</option>
-                                    ))}
-                                </select>
+                                    onChange={(val) => setSelectedVolunteerId(val)}
+                                    placeholder="Digite para buscar o voluntário..."
+                                    className="w-full md:w-1/2"
+                                />
                             </div>
                         )}
 
-                        {volunteerReportType !== 'specialty' && (
+                        {volunteerReportType !== 'specialty' && volunteerReportType !== 'lgpd_term' && (
                             <>
                                 <h4 className="font-semibold text-slate-700 mb-4">Selecione as colunas para o relatório:</h4>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -897,14 +976,23 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                         )}
 
                         <div className="flex justify-end gap-3">
-                            <button onClick={() => handleGenerateVolunteerReport('excel')} className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-xl hover:bg-green-100 transition-colors font-semibold">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                Excel
-                            </button>
-                            <button onClick={() => handleGenerateVolunteerReport('pdf')} className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors font-semibold">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                PDF
-                            </button>
+                            {volunteerReportType === 'lgpd_term' ? (
+                                <button onClick={() => handleGenerateVolunteerReport('pdf')} className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition-colors font-bold shadow-lg shadow-purple-200">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                    Gerar Termo de Consentimento
+                                </button>
+                            ) : (
+                                <>
+                                    <button onClick={() => handleGenerateVolunteerReport('excel')} className="flex items-center gap-2 bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-xl hover:bg-green-100 transition-colors font-semibold">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        Excel
+                                    </button>
+                                    <button onClick={() => handleGenerateVolunteerReport('pdf')} className="flex items-center gap-2 bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors font-semibold">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        PDF
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}
@@ -1149,7 +1237,51 @@ const Reports: React.FC<ReportsProps> = ({ patients, volunteers, appointments })
                 )}
             </div>
 
-        </div >
+
+
+
+
+            {/* Modal de Impressão LGPD (Reutilizando Componente) */}
+            {
+                showConsentPrint && consentData && settings && (
+                    <ConsentPrint
+                        person={consentData.person}
+                        type={consentData.type}
+                        clinicName={settings.clinic_name}
+                        onClose={() => setShowConsentPrint(false)}
+                    />
+                )
+            }
+
+
+
+            {/* Audit Logs Section (LGPD) - Visible to Admin and Staff */}
+            {(currentUser?.role === 'ADMIN' || currentUser?.role === 'STAFF') && (
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <button
+                        onClick={() => toggleSection('audit')}
+                        className="w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            </div>
+                            <div className="text-left">
+                                <h3 className="text-lg font-bold text-slate-800">Relatórios de Logs (LGPD)</h3>
+                                <p className="text-sm text-slate-500">Visualize o histórico de acesso e ações no sistema.</p>
+                            </div>
+                        </div>
+                        <svg className={`w-6 h-6 text-slate-400 transition-transform ${openSection === 'audit' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+
+                    {openSection === 'audit' && (
+                        <div className="p-6 border-t border-slate-100 bg-slate-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <AuditLogViewer />
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
     );
 };
 

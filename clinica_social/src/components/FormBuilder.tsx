@@ -83,9 +83,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ initialData, onSave, onCancel
                 active: true
             };
             await onSave(payload);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('Erro ao salvar modelo.');
+            alert(`Erro ao salvar modelo: ${error.message}`);
         } finally {
             setSaving(false);
         }

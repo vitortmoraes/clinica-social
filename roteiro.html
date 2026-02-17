@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro: Minha Experiência com Google Antigravity</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max_width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #1e40af;
+            margin-top: 30px;
+            background-color: #f0f9ff;
+            padding: 10px;
+            border-left: 5px solid #2563eb;
+        }
+
+        .scene {
+            color: #6b7280;
+            font-style: italic;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .dialogue {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #9ca3af;
+        }
+
+        .list-item {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                font-size: 14pt;
+            }
+
+            h2 {
+                page-break-before: auto;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print" style="background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+        <strong> dica:</strong> Pressione <code>Ctrl + P</code> (ou Cmd + P) e escolha "Salvar como PDF" para gerar o
+        arquivo.
+    </div>
+
+    <h1>🎬 Roteiro: Google Antigravity & Clínica Cuidar</h1>
+    <p><strong>Título:</strong> Construindo um SaaS Completo com IA</p>
+    <p><strong>Tom:</strong> Entusiasmado, transparente e educativo.</p>
+
+    <h2>1. Abertura (O Gancho) 🎣</h2>
+    <div class="scene">(Câmera em você, cenário tech ao fundo)</div>
+    <div class="dialogue">
+        "E aí, pessoal! Vídeo super especial hoje. Vocês viram a série de vídeos sobre a <strong>Clínica
+            Cuidar</strong>, certo? O sistema de gestão para ONGs que a gente construiu."
+    </div>
+    <div class="dialogue">
+        "Muita gente me perguntou: 'Vitor, como você codou tudo isso tão rápido? Frontend, Backend, Banco de Dados,
+        Testes... você não dorme?'"
+    </div>
+    <div class="dialogue">
+        "A verdade é que eu não estava sozinho. Eu tive um <strong>Pair Programmer</strong> de outro mundo. Hoje eu vou
+        contar como foi minha experiência construindo esse projeto do zero com o <strong>Google Antigravity</strong>."
+    </div>
+
+    <h2>1.5. O que é um SaaS? (Contexto Rápido) ☁️</h2>
+    <div class="scene">(Gráfico simples na tela: CD-ROM vs Nuvem)</div>
+    <div class="dialogue">
+        "Mas antes, o que é um <strong>SaaS</strong>? A sigla significa <em>Software as a Service</em> (Software como
+        Serviço)."
+    </div>
+    <div class="dialogue">
+        "Antigamente, você comprava o CD do Office ou do Photoshop, instalava e pronto. Hoje, você acessa tudo pelo
+        navegador e paga uma assinatura. Tipo a <strong>Netflix</strong>: você não compra o filme, você 'aluga' o acesso
+        à plataforma."
+    </div>
+    <div class="dialogue">
+        "A <strong>Clínica Cuidar</strong> é exatamente isso: um sistema que qualquer clínica pode acessar de qualquer
+        lugar, sem instalar nada, para gerenciar a vida deles. E construir isso do zero dá trabalho!"
+    </div>
+
+    <h2>1.6. O Segredo da Arquitetura (Single vs Multi-tenant) 🏗️</h2>
+    <div class="scene">(Você falando com ar de especialista)</div>
+    <div class="dialogue">
+        "E aqui vai um segredo de bastidores: Existem dois tipos de SaaS."
+    </div>
+    <div class="list-item">1. Multi-Tenant (Tipo Facebook): Todo mundo usa o mesmo banco de dados.</div>
+    <div class="list-item">2. Single-Tenant (O Nosso Caso): Cada cliente tem sua "casa" separada.</div>
+    <div class="dialogue" style="margin-top: 15px;">
+        "A Clínica Cuidar hoje é um <strong>SaaS Dedicado</strong>. Isso significa mais segurança para os dados deles,
+        pois o banco de dados é exclusivo. Mas a beleza do código é que ele é modular: se amanhã quisermos escalar para
+        100 clínicas, a base já está pronta."
+    </div>
+
+    <h2>2. O Desafio (O Problema) 🏔️</h2>
+    <div class="scene">(Imagens rápidas da tela do VS Code, talvez um erro aparecendo)</div>
+    <div class="dialogue">
+        "A missão era complexa: Criar um sistema robusto para gerenciar pacientes, voluntários, agendamentos e
+        financeiro."
+    </div>
+    <div class="list-item">• 🔐 Segurança real (Login, Senhas Criptografadas).</div>
+    <div class="list-item">• 💰 Financeiro auditável (Transações, Relatórios).</div>
+    <div class="list-item">• 🧪 Qualidade Profissional (Testes Automatizados).</div>
+    <div class="dialogue" style="margin-top: 15px;">
+        "Eu sabia o que queria, mas programar cada linha, configurar o ambiente, debugar... isso levaria meses."
+    </div>
+
+    <h2>3. O Aliado (A Solução) 🤖</h2>
+    <div class="scene">(Mostrar a interface do Antigravity/Agent ou prints da nossa conversa)</div>
+    <div class="dialogue">
+        "Foi aí que entrou o Antigravity. Mas esqueça aquele Chatbot que só responde 'Olá, posso ajudar?'. O Antigravity
+        funciona como um Engenheiro Sênior sentado do seu lado."
+    </div>
+    <div class="dialogue">
+        "A diferença? Ele tem acesso aos arquivos. Ele não só 'dá dicas', ele entra no código, refatora, cria arquivos e
+        roda comandos."
+    </div>
+    <div class="quote">
+        <strong>Exemplo Prático (Flashback):</strong><br>
+        "Lembram do Módulo Financeiro? Eu precisava calcular o saldo diário baseado em PIX, Dinheiro e Cartão. Eu
+        expliquei a lógica em português e... <em>BOOM</em>. Ele montou a estrutura do banco de dados (SQLModel) e a
+        lógica de recálculo em minutos."
+    </div>
+
+    <h2>4. Os Obstáculos (A Realidade) 🚧</h2>
+    <div class="scene">(Corte para você falando sério)</div>
+    <div class="dialogue">
+        "Mas nem tudo é mágica. E é aqui que a experiência fica interessante. A IA não substitui o programador, ela
+        <strong>potencializa</strong>."
+    </div>
+    <div class="dialogue">
+        "Tivemos momentos tensos. Erros de IntegrityError no banco, problemas com hash de senha no Windows... E foi
+        incrível ver como a gente resolveu isso junto."
+    </div>
+    <div class="dialogue">
+        "Em vez de eu ficar 4 horas no StackOverflow, o Antigravity analisava o erro no terminal e sugeria: <em>'Olha, o
+            Windows tem um limite de tamanho pra senha, vamos fazer um Mock aqui pra testar'.</em>"
+    </div>
+    <div class="dialogue">
+        "Essa troca – eu guiando a arquitetura e ele resolvendo a implementação técnica – foi o que acelerou o projeto
+        em 10x."
+    </div>
+
+    <h2>5. O Grande Marco: 70% de Cobertura 🎯</h2>
+    <div class="scene">(Mostrar o print do terminal com os testes verdes)</div>
+    <div class="dialogue">
+        "O ponto alto pra mim foi a parte de <strong>Qualidade de Software (QA)</strong>."
+    </div>
+    <div class="dialogue">
+        "Eu pedi ajuda para criar testes. Ele não só criou os testes, ele criou um <strong>Guia Educativo</strong>
+        usando analogias de comida!"
+    </div>
+    <div class="quote">
+        <em>'Código é o ingrediente, Teste é provar o molho...'</em>
+    </div>
+    <div class="dialogue">
+        "Saímos de 0% para <strong>70% de Cobertura de Testes</strong> em questão de horas. Testamos login, fluxo de
+        atendimento médico, relatórios financeiros... O sistema ficou blindado."
+    </div>
+
+    <h2>6. Conclusão (O Veredito) 🚀</h2>
+    <div class="dialogue">
+        "Minha conclusão depois de construir a Clínica Cuidar com IA?"
+    </div>
+    <div class="list-item">1. Velocidade: O que levaria semanas, fizemos em dias.</div>
+    <div class="list-item">2. Aprendizado: Eu aprendi muito sobre Pytest e FastAPI vendo o código que ele gerava.</div>
+    <div class="list-item">3. Foco: Eu foquei no negócio (ajudar a clínica), e ele focou na sintaxe (o código).</div>
+    <div class="dialogue" style="margin-top: 15px;">
+        "Se você é dev, não tenha medo da IA. Aprenda a 'pairar' com ela. O resultado é absurdo."
+    </div>
+    <div class="dialogue" style="margin-top: 20px; font-weight: bold;">
+        (Chamada para Ação)<br>
+        "Se curtiu essa jornada e quer ver o código fonte da Clínica Cuidar, o link tá na descrição. Deixa o like se
+        quer mais vídeos de bastidores assim. Até a próxima!"
+    </div>
+
+</body>
+
+</html>

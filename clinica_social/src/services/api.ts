@@ -3,6 +3,7 @@ import { Patient, Volunteer, Appointment, User, Role, PaymentTable, SpecialtyIte
 const API_BASE = 'http://localhost:8000/api/v1';
 
 export const api = {
+
     getPatients: async (): Promise<Patient[]> => {
         try {
             const response = await fetch(`${API_BASE}/patients/`);
@@ -16,28 +17,47 @@ export const api = {
         }
     },
     createPatient: async (patient: Omit<Patient, 'id'>) => {
-        const response = await fetch(`${API_BASE}/patients/`, {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/patients`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(patient),
         });
         if (!response.ok) throw new Error('Failed to create patient');
         return await response.json();
     },
     updatePatient: async (patient: Patient) => {
-        const response = await fetch(`${API_BASE}/patients/${patient.id}/`, {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/patients/${patient.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(patient),
         });
         if (!response.ok) throw new Error('Failed to update patient');
         return await response.json();
     },
     deletePatient: async (id: string) => {
-        const response = await fetch(`${API_BASE}/patients/${id}/`, {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/patients/${id}`, {
             method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to delete patient');
+    },
+    anonymizePatient: async (id: string) => {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/patients/${id}/anonymize`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed to anonymize patient');
+        return await response.json();
     },
     getAddressByCep: async (cep: string) => {
         try {
@@ -123,28 +143,38 @@ export const api = {
         }
     },
     createVolunteer: async (volunteer: Omit<import('../types').Volunteer, 'id'>) => {
-        const response = await fetch(`${API_BASE}/volunteers/`, {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/volunteers`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(volunteer),
         });
         if (!response.ok) throw new Error('Failed to create volunteer');
         return await response.json();
     },
     updateVolunteer: async (volunteer: import('../types').Volunteer) => {
+        const token = localStorage.getItem('@ClinicaSocial:token');
         // Prepare data ensuring password is removed if empty/not meant to be updated
         // For now, we send everything. Backend ignores missing fields in update.
-        const response = await fetch(`${API_BASE}/volunteers/${volunteer.id}/`, {
+        const response = await fetch(`${API_BASE}/volunteers/${volunteer.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(volunteer),
         });
         if (!response.ok) throw new Error('Failed to update volunteer');
         return await response.json();
     },
     deleteVolunteer: async (id: string) => {
-        const response = await fetch(`${API_BASE}/volunteers/${id}/`, {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const response = await fetch(`${API_BASE}/volunteers/${id}`, {
             method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to delete volunteer');
     },
@@ -201,7 +231,12 @@ export const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials),
         });
-        if (!response.ok) throw new Error('Credenciais inválidas');
+        if (!response.ok) {
+            throw {
+                message: 'Credenciais inválidas',
+                response: { status: response.status }
+            };
+        }
         const data = await response.json();
         if (data.access_token) {
             localStorage.setItem('@ClinicaSocial:token', data.access_token);
@@ -442,7 +477,10 @@ export const api = {
                 },
                 body: JSON.stringify(data),
             });
-            if (!response.ok) throw new Error('Failed to create template');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                throw new Error(errorData.detail || 'Failed to create template');
+            }
             return await response.json();
         },
         updateTemplate: async (id: string, data: any): Promise<any> => {
@@ -455,7 +493,10 @@ export const api = {
                 },
                 body: JSON.stringify(data)
             });
-            if (!response.ok) throw new Error('Failed to update template');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                throw new Error(errorData.detail || 'Failed to update template');
+            }
             return await response.json();
         },
         deleteTemplate: async (id: string): Promise<void> => {
@@ -465,6 +506,49 @@ export const api = {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) throw new Error('Failed to delete template');
+        }
+    },
+    // Audit Logs
+    getAuditLogs: async (filters?: { user_id?: string, limit?: number, start_date?: string, end_date?: string }): Promise<any[]> => {
+        const token = localStorage.getItem('@ClinicaSocial:token');
+        const params = new URLSearchParams();
+        if (filters?.user_id) params.append('user_id', filters.user_id);
+        if (filters?.limit) params.append('limit', filters.limit.toString());
+        if (filters?.start_date && filters.start_date.trim() !== '') params.append('start_date', filters.start_date);
+        if (filters?.end_date && filters.end_date.trim() !== '') params.append('end_date', filters.end_date);
+
+        const response = await fetch(`${API_BASE}/audit?${params}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Failed to fetch audit logs');
+        return await response.json();
+    },
+    // Backup
+    backup: {
+        trigger: async (): Promise<{ filename: string }> => {
+            const token = localStorage.getItem('@ClinicaSocial:token');
+            const response = await fetch(`${API_BASE}/admin/backup`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Falha ao gerar backup');
+            return await response.json();
+        },
+        list: async (): Promise<{ filename: string, size: number, created_at: number }[]> => {
+            const token = localStorage.getItem('@ClinicaSocial:token');
+            const response = await fetch(`${API_BASE}/admin/backups`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Falha ao listar backups');
+            return await response.json();
+        },
+        download: async (filename: string): Promise<Blob> => {
+            const token = localStorage.getItem('@ClinicaSocial:token');
+            const response = await fetch(`${API_BASE}/admin/backups/${filename}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Falha ao baixar backup');
+            return await response.blob();
         }
     }
 };

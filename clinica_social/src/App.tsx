@@ -11,9 +11,11 @@ import MealPlanEditor from './pages/MealPlanEditor';
 import MealPlanPrint from './pages/MealPlanPrint';
 import AdminApp from './pages/AdminApp';
 import AppointmentConfirmation from './pages/AppointmentConfirmation';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import DpiaPage from './pages/DpiaPage';
 import { useAuth } from './contexts/AuthContext';
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: React.ReactElement }) {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
@@ -22,6 +24,21 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 
     if (!isAuthenticated) {
         return <Navigate to="/acesso-voluntarios" replace />;
+    }
+
+    return children;
+}
+
+function RequireMedicalAccess({ children }: { children: React.ReactElement }) {
+    const { user, loading } = useAuth();
+
+    if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+
+    // Allow ADMIN and VOLUNTEER. Block STAFF (Receptionists) from seeing medical details.
+    // Ideally we should use the Role enum, but checking strings is safe here matching the backend.
+    if (!user || (user.role !== 'ADMIN' && user.role !== 'VOLUNTEER')) {
+        // Redirect to home/dashboard if unauthorized
+        return <Navigate to="/" replace />;
     }
 
     return children;
@@ -51,22 +68,65 @@ const App: React.FC = () => {
                 }
             />
 
-            <Route path="/print/record/:id" element={<MedicalRecordPrint />} />
-            <Route path="/print/record/:id" element={<MedicalRecordPrint />} />
-            <Route path="/print/prescription/:id" element={<PrescriptionPrint />} />
-            <Route path="/print/receipt/:id" element={<ReceiptPrint />} />
+            {/* Protected Print Routes (Medical Only) */}
+            <Route
+                path="/print/record/:id"
+                element={
+                    <RequireAuth>
+                        <RequireMedicalAccess>
+                            <MedicalRecordPrint />
+                        </RequireMedicalAccess>
+                    </RequireAuth>
+                }
+            />
+            <Route
+                path="/print/prescription/:id"
+                element={
+                    <RequireAuth>
+                        <RequireMedicalAccess>
+                            <PrescriptionPrint />
+                        </RequireMedicalAccess>
+                    </RequireAuth>
+                }
+            />
+
+            {/* Receipt is Financial, maybe Staff can see? User didn't specify, but usually Staff handles money. Keeping Auth only for now. */}
+            <Route
+                path="/print/receipt/:id"
+                element={
+                    <RequireAuth>
+                        <ReceiptPrint />
+                    </RequireAuth>
+                }
+            />
+
             <Route
                 path="/meal-plan/:id"
                 element={
                     <RequireAuth>
-                        <MealPlanEditor />
+                        <RequireMedicalAccess>
+                            <MealPlanEditor />
+                        </RequireMedicalAccess>
                     </RequireAuth>
                 }
             />
-            <Route path="/print/meal-plan/:id" element={<MealPlanPrint />} />
+            <Route
+                path="/print/meal-plan/:id"
+                element={
+                    <RequireAuth>
+                        <RequireMedicalAccess>
+                            <MealPlanPrint />
+                        </RequireMedicalAccess>
+                    </RequireAuth>
+                }
+            />
 
             {/* Public Confirmation Route */}
             <Route path="/confirmar-consulta/:id" element={<AppointmentConfirmation />} />
+
+            {/* Public Privacy Policy */}
+            <Route path="/politica-privacidade" element={<PrivacyPolicy />} />
+            <Route path="/relatorio-impacto" element={<DpiaPage />} />
 
             {/* Admin Module (Existing App) */}
             {/* It handles its own internal "routing"/view switching for now */}

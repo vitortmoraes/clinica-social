@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Patient, PaymentTable } from '../types';
 import { api } from '../services/api';
+import ConsentPrint from './ConsentPrint';
+
 
 interface PatientManagementProps {
   patients: Patient[];
@@ -44,7 +46,9 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
     payment_table_id: '',
     guardian_name: '',
     guardian_cpf: '',
-    guardian_phone: ''
+    guardian_phone: '',
+    lgpd_consent: false,
+    lgpd_consent_date: ''
   };
   const [formData, setFormData] = useState<Partial<Patient>>(initialFormState);
 
@@ -59,6 +63,19 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
       age--;
     }
     return age < 18;
+  };
+
+  // Helper: Mask CPF
+  const maskCPF = (cpf: string) => {
+    if (!cpf) return '---';
+    // If it's a long encrypted string (Fernet > 50 chars)
+    if (cpf.length > 20) return '🔒 Protegido';
+    // If it's a standard CPF (11 digits or formatted)
+    const clean = cpf.replace(/\D/g, '');
+    if (clean.length === 11) {
+      return `${clean.substr(0, 3)}.***.***-**`;
+    }
+    return cpf;
   };
 
   // Fetch Patients & Payment Tables
@@ -142,6 +159,10 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [patientToDelete, setPatientToDelete] = useState<{ id: string, name: string } | null>(null);
 
+  // Anonymize State
+  const [anonymizeModalOpen, setAnonymizeModalOpen] = useState(false);
+  const [patientToAnonymize, setPatientToAnonymize] = useState<{ id: string, name: string } | null>(null);
+
   const handleDelete = (id: string, name: string) => {
     setPatientToDelete({ id, name });
     setDeleteModalOpen(true);
@@ -150,17 +171,45 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
   const confirmDelete = async () => {
     if (patientToDelete) {
       try {
+        // Soft Delete: Call backend delete endpoint which handles soft delete and logging
         await api.deletePatient(patientToDelete.id);
+
+        // Remove from local state
         setPatients(patients.filter(p => p.id !== patientToDelete.id));
         setDeleteModalOpen(false);
         setPatientToDelete(null);
-        alert('Paciente excluído.');
+        alert('Paciente excluído (Desativado).');
       } catch (error) {
         console.error("Erro ao excluir:", error);
         alert("Erro ao excluir. Tente novamente.");
       }
     }
   };
+
+  const handleAnonymize = (id: string, name: string) => {
+    setPatientToAnonymize({ id, name });
+    setAnonymizeModalOpen(true);
+  };
+
+  const confirmAnonymize = async () => {
+    if (patientToAnonymize) {
+      try {
+        await api.anonymizePatient(patientToAnonymize.id);
+        // Remove from local state (treated as deleted/hidden)
+        setPatients(patients.filter(p => p.id !== patientToAnonymize.id));
+        setAnonymizeModalOpen(false);
+        setPatientToAnonymize(null);
+        alert('Paciente anonimizado com sucesso. Os dados pessoais foram removidos.');
+      } catch (error) {
+        console.error("Erro ao anonimizar:", error);
+        alert("Erro ao anonimizar. Tente novamente.");
+      }
+    }
+  };
+
+
+  // Consent Print State
+  const [printConsentPatient, setPrintConsentPatient] = useState<Patient | null>(null);
 
   // Helper to get payment table details
   const getPaymentTableDetails = (id?: string) => {
@@ -171,8 +220,9 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
   // Filter & Sort Logic
   const filteredPatients = patients
     .filter(p =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.cpf.includes(searchTerm)
+      p.active !== false &&
+      (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.cpf.includes(searchTerm))
     )
     .sort((a, b) => {
       if (sortField === 'name') return a.name.localeCompare(b.name);
@@ -225,10 +275,7 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
                   Nascimento
                 </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Endereço</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Tabela (Pagamento)
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
+                <th className="px-6 py-4 w-48 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -251,7 +298,9 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
                         </div>
                         <div>
                           <div className="font-semibold text-slate-800">{p.name}</div>
-                          <div className="text-xs text-slate-500 font-mono">{p.cpf}</div>
+                          <div className="text-xs text-slate-500 font-mono" title={p.cpf}>
+                            {maskCPF(p.cpf)}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -266,14 +315,12 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
                     <td className="px-6 py-4 text-sm text-slate-600 max-w-xs truncate">
                       {p.address?.neighborhood || 'Não informado'}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-primary">
-                        {tableDetails.name}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => { setFormData(p); setIsEditMode(true); setIsModalOpen(true); }} className="text-primary hover:text-green-800 font-medium text-sm">Editar</button>
-                      <button onClick={() => handleDelete(p.id, p.name)} className="text-red-600 hover:text-red-900 font-medium text-sm">Excluir</button>
+
+                    <td className="px-6 py-4 text-right flex gap-2 justify-end items-center opacity-0 group-hover:opacity-100 transition-opacity bg-white/50 backdrop-blur-sm">
+                      <button onClick={() => { setFormData(p); setIsEditMode(true); setIsModalOpen(true); }} className="border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all" title="Editar">Editar</button>
+                      <button onClick={() => setPrintConsentPatient(p)} className="border border-slate-500 text-slate-500 hover:bg-slate-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all" title="Imprimir Termo LGPD">LGPD</button>
+                      <button onClick={() => handleAnonymize(p.id, p.name)} className="border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all" title="Remover dados pessoais (LGPD)">Anônimo</button>
+                      <button onClick={() => handleDelete(p.id, p.name)} className="border border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all" title="Excluir">Excluir</button>
                     </td>
                   </tr>
                 )
@@ -593,47 +640,128 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
                 </div>
               </div>
 
+
+              {/* LGPD Consent */}
+              <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                <h3 className="text-sm font-bold text-indigo-800 uppercase tracking-wider mb-2">Consentimento LGPD</h3>
+                <div className="flex items-start gap-3">
+                  <input
+                    id="lgpd_consent"
+                    type="checkbox"
+                    required
+                    className="mt-1 w-5 h-5 text-primary border-slate-300 rounded focus:ring-primary"
+                    checked={formData.lgpd_consent || false}
+                    onChange={e => setFormData({
+                      ...formData,
+                      lgpd_consent: e.target.checked,
+                      lgpd_consent_date: e.target.checked ? new Date().toISOString() : ''
+                    })}
+                  />
+                  <label htmlFor="lgpd_consent" className="text-sm text-slate-700 cursor-pointer">
+                    Declaro que o paciente (ou responsável) autorizou o tratamento de seus dados pessoais para fins de atendimento médico e assistencial, conforme a <b>Lei Geral de Proteção de Dados (LGPD)</b>.
+                    {formData.lgpd_consent_date && (
+                      <span className="block text-xs text-slate-500 mt-1">
+                        Consentimento registrado em: {new Date(formData.lgpd_consent_date).toLocaleString('pt-BR')}
+                      </span>
+                    )}
+                  </label>
+                </div>
+              </div>
+
               <div className="flex gap-4 pt-4">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-all">Cancelar</button>
                 <button type="submit" className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-green-100 hover:bg-green-800 transition-all">Salvar Dados</button>
               </div>
             </form>
           </div>
-        </div>
+        </div >
       )}
 
       {/* Modal - Confirmação de Exclusão */}
-      {deleteModalOpen && patientToDelete && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto text-red-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-slate-800 text-center mb-2">Excluir Paciente?</h3>
-            <p className="text-slate-500 text-center text-sm mb-6">
-              Você está prestes a excluir <b>{patientToDelete.name}</b>. Esta ação é irreversível e removerá todos os dados associados.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteModalOpen(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="flex-1 bg-red-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
-              >
-                Sim, Excluir
-              </button>
+      {
+        deleteModalOpen && patientToDelete && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto text-red-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 text-center mb-2">Excluir Paciente?</h3>
+              <p className="text-slate-500 text-center text-sm mb-6">
+                Você está prestes a excluir <b>{patientToDelete.name}</b>. Esta ação é irreversível e removerá todos os dados associados.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-red-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
+                >
+                  Sim, Excluir
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+
+      {/* Modal - Confirmação de Anonimização */}
+      {
+        anonymizeModalOpen && patientToAnonymize && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl animate-in fade-in zoom-in duration-200 border-2 border-orange-100">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto text-orange-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 text-center mb-2">Anonimizar Paciente?</h3>
+              <p className="text-slate-500 text-center text-sm mb-4">
+                Você está acionando o <b>Direito ao Esquecimento (LGPD)</b> para <b>{patientToAnonymize.name}</b>.
+              </p>
+              <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 mb-6 text-xs text-orange-800">
+                <p className="font-bold mb-1">ATENÇÃO:</p>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li>O nome, CPF e contato serão removidos.</li>
+                  <li>O histórico de saúde será mantido como "ANÔNIMO" para fins estatísticos.</li>
+                  <li><b>Esta ação NÃO pode ser desfeita.</b></li>
+                </ul>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setAnonymizeModalOpen(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmAnonymize}
+                  className="flex-1 bg-orange-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        printConsentPatient && (
+          <ConsentPrint
+            person={printConsentPatient}
+            type="patient"
+            clinicName="CLÍNICA SOCIAL CUIDAR"
+            onClose={() => setPrintConsentPatient(null)}
+          />
+        )
+      }
+    </div >
   );
 };
+
 
 export default PatientManagement;

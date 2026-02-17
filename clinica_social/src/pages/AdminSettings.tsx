@@ -259,6 +259,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ currentUser }) => {
         )}
       </div>
 
+
+
       {/* Document Templates Section */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         <button
@@ -274,6 +276,64 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ currentUser }) => {
         {openSection === 'templates' && (
           <div className="p-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200">
             <FormTemplatesManager />
+          </div>
+        )}
+      </div>
+
+      {/* Backup Section - Admin Only */}
+      {currentUser?.role === 'ADMIN' && (
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <button
+            onClick={() => toggleSection('backup')}
+            className="w-full px-8 py-6 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors"
+          >
+            <div className="text-left">
+              <h2 className="text-xl font-bold text-slate-800">Backup e Restauração</h2>
+              <p className="text-slate-500 text-sm">Gerencie cópias de segurança e agendamentos.</p>
+            </div>
+            <svg className={`w-6 h-6 text-slate-400 transition-transform ${openSection === 'backup' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          {openSection === 'backup' && (
+            <div className="p-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200">
+              <BackupManager />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legal Documentation Section - LGPD */}
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <button
+          onClick={() => toggleSection('legal')}
+          className="w-full px-8 py-6 flex justify-between items-center bg-white hover:bg-slate-50 transition-colors"
+        >
+          <div className="text-left">
+            <h2 className="text-xl font-bold text-slate-800">Documentação Legal (LGPD)</h2>
+            <p className="text-slate-500 text-sm">Acesse os termos de privacidade e relatórios de impacto.</p>
+          </div>
+          <svg className={`w-6 h-6 text-slate-400 transition-transform ${openSection === 'legal' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        {openSection === 'legal' && (
+          <div className="p-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="/politica-privacidade" target="_blank" className="group block bg-white border border-slate-200 hover:border-green-500 rounded-xl p-6 transition-all hover:shadow-md">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="bg-green-100 p-3 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                </div>
+                <h3 className="font-bold text-slate-800 text-lg">Política de Privacidade</h3>
+              </div>
+              <p className="text-slate-500 text-sm">Visualize o documento público de privacidade.</p>
+            </a>
+
+            <a href="/relatorio-impacto" className="group block bg-white border border-slate-200 hover:border-indigo-500 rounded-xl p-6 transition-all hover:shadow-md">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="bg-indigo-100 p-3 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                </div>
+                <h3 className="font-bold text-slate-800 text-lg">Relatório de Impacto (DPIA)</h3>
+              </div>
+              <p className="text-slate-500 text-sm">Visualizar relatório técnico de riscos e mitigações.</p>
+            </a>
           </div>
         )}
       </div>
@@ -887,3 +947,155 @@ const FormTemplatesManager: React.FC = () => {
 };
 
 export default AdminSettings;
+
+const BackupManager: React.FC = () => {
+  const [backups, setBackups] = useState<any[]>([]);
+  const [schedule, setSchedule] = useState({ frequency: 'manual', time: '03:00' });
+  const [loading, setLoading] = useState(false);
+  const [backingUp, setBackingUp] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [settingsData, backupsList] = await Promise.all([
+        api.settings.get(),
+        api.backup.list()
+      ]);
+      setSchedule({
+        frequency: settingsData.backup_frequency || 'manual',
+        time: settingsData.backup_time || '03:00'
+      });
+      setBackups(backupsList);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveSchedule = async () => {
+    try {
+      await api.settings.update({
+        backup_frequency: schedule.frequency,
+        backup_time: schedule.time
+      });
+      alert('Agendamento salvo com sucesso!');
+    } catch (e) {
+      alert('Erro ao salvar agendamento.');
+    }
+  };
+
+  const handleManualBackup = async () => {
+    if (!window.confirm('Iniciar backup agora? Isso pode levar alguns segundos.')) return;
+    setBackingUp(true);
+    try {
+      await api.backup.trigger();
+      alert('Backup realizado com sucesso!');
+      loadData();
+    } catch (e) {
+      alert('Erro ao realizar backup.');
+    } finally {
+      setBackingUp(false);
+    }
+  };
+
+  const handleDownload = async (filename: string) => {
+    try {
+      const blob = await api.backup.download(filename);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (e) {
+      alert('Erro ao baixar arquivo.');
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col md:flex-row gap-6 items-end">
+        <div className="flex-1 w-full">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Frequência do Backup Automático</label>
+          <select
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary bg-white"
+            value={schedule.frequency}
+            onChange={e => setSchedule({ ...schedule, frequency: e.target.value })}
+          >
+            <option value="manual">Manual (Desativado)</option>
+            <option value="daily">Diário (Todos os dias)</option>
+            <option value="weekly">Semanal (Todo Domingo)</option>
+          </select>
+        </div>
+        <div className="w-full md:w-32">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">Horário</label>
+          <input
+            type="time"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary"
+            value={schedule.time}
+            onChange={e => setSchedule({ ...schedule, time: e.target.value })}
+            disabled={schedule.frequency === 'manual'}
+          />
+        </div>
+        <button
+          onClick={handleSaveSchedule}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-100 h-[50px] w-full md:w-auto"
+        >
+          Salvar Agendamento
+        </button>
+      </div>
+
+      <div className="bg-green-50 p-6 rounded-2xl border border-green-100 flex justify-between items-center">
+        <div>
+          <h3 className="font-bold text-green-900 text-lg">Backup Manual</h3>
+          <p className="text-green-700 text-sm">Gere uma cópia de segurança criptografada agora mesmo.</p>
+        </div>
+        <button
+          onClick={handleManualBackup}
+          disabled={backingUp}
+          className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-green-200 disabled:opacity-50 flex items-center gap-2"
+        >
+          {backingUp ? 'Gerando...' : 'Gerar Backup Agora'}
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-bold text-slate-800 text-lg">Histórico de Backups</h3>
+        {backups.length === 0 ? (
+          <p className="text-slate-500 italic">Nenhum backup encontrado.</p>
+        ) : (
+          <div className="grid gap-3">
+            {backups.map((b: any) => (
+              <div key={b.filename} className="bg-white p-4 rounded-xl border border-slate-100 flex justify-between items-center hover:shadow-sm transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="bg-green-100 p-2 rounded-lg text-green-700">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-800">{b.filename}</p>
+                    <p className="text-xs text-slate-500">
+                      {new Date(b.created_at * 1000).toLocaleString()} • {(b.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleDownload(b.filename)}
+                  className="text-indigo-600 hover:text-indigo-800 font-bold text-sm px-4 py-2 hover:bg-indigo-50 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  Baixar
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

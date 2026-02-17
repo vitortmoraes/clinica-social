@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Conformidade LGPD - Clínica Social</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                font-size: 12pt;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen p-8 print:p-0 print:bg-white">
+
+    <div class="max-w-4xl mx-auto bg-white p-12 shadow-xl print:shadow-none relative">
+
+        <!-- Print Button -->
+        <button onclick="window.print()"
+            class="no-print absolute top-8 right-8 bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-md transition-colors">
+            🖨️ Imprimir / Salvar PDF
+        </button>
+
+        <header class="border-b-2 border-slate-800 pb-6 mb-8">
+            <h1 class="text-3xl font-bold text-slate-900 uppercase">Guia de Conformidade LGPD</h1>
+            <p class="text-slate-500 mt-2">Clínica Social - Sistema de Gestão</p>
+        </header>
+
+        <div class="prose max-w-none text-slate-800 space-y-6">
+
+            <section>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 border-l-4 border-green-600 pl-3">1. Visão Geral</h2>
+                <p>Este documento descreve as medidas técnicas e administrativas implementadas no sistema
+                    <strong>Clínica Social</strong> para garantir a conformidade com a Lei Geral de Proteção de Dados
+                    (LGPD - Lei nº 13.709/2018).</p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 border-l-4 border-green-600 pl-3">2. Status de
+                    Implementação</h2>
+                <table class="w-full border-collapse border border-slate-200 text-sm">
+                    <thead>
+                        <tr class="bg-slate-50">
+                            <th class="border border-slate-300 p-2 text-left">Requisito LGPD</th>
+                            <th class="border border-slate-300 p-2 text-center">Status</th>
+                            <th class="border border-slate-300 p-2 text-left">Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Registro de Consentimento</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Termos impressos e checkbox obrigatório.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Rastreabilidade (Logs)</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Logs de auditoria completos (Quem, Quando, Onde).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Controle de Acesso</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Separação Admin/Staff/Voluntário.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Direito de Exclusão</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Arquivamento (Soft Delete) e Anonimização.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Segurança de Dados</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Criptografia de CPF (Fernet/AES) no banco.</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-2 font-bold">Transparência</td>
+                            <td class="border border-slate-300 p-2 text-center text-green-600">✅ Concluído</td>
+                            <td class="border border-slate-300 p-2">Política de Privacidade e Relatório DPIA.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-bold text-slate-800 mb-4 border-l-4 border-green-600 pl-3">3. Detalhamento das
+                    Medidas Técnicas</h2>
+
+                <div class="mb-4">
+                    <h3 class="font-bold text-lg">3.1. Logs de Auditoria</h3>
+                    <p class="text-sm border-l-2 border-slate-200 pl-2">O sistema grava: <strong>Usuário, IP, Ação e
+                            Dados Alterados</strong>. Impossível apagar logs via interface.</p>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="font-bold text-lg">3.2. Ciclo de Vida dos Dados</h3>
+                    <p class="text-sm border-l-2 border-slate-200 pl-2">
+                        <strong>Soft Delete:</strong> Dados "apagados" ficam ocultos (active=False) para auditoria.<br>
+                        <strong>Anonimização:</strong> Recurso para desvincular dados pessoais de estatísticas.
+                    </p>
+                </div>
+            </section>
+
+            <section class="mt-8 bg-yellow-50 p-6 border border-yellow-200 rounded-xl break-inside-avoid">
+                <h2 class="text-xl font-bold text-yellow-800 mb-4">4. Recomendações Humanas (Gestão)</h2>
+                <p class="mb-4 text-yellow-900">O sistema garante a parte técnica. A clínica deve garantir os processos:
+                </p>
+                <ol class="list-decimal pl-5 space-y-2 text-yellow-900 font-medium">
+                    <li><strong>Nomear um Encarregado (DPO):</strong> Alguém para responder dúvidas.</li>
+                    <li><strong>Treinamento:</strong> Orientar voluntários a proteger senhas.</li>
+                    <li><strong>Contratos:</strong> Cláusulas de confidencialidade com voluntários.</li>
+                    <li><strong>Descarte Seguro:</strong> Triturar papéis com dados médicos.</li>
+                </ol>
+            </section>
+
+        </div>
+
+        <footer class="mt-12 pt-6 border-t border-slate-200 text-center text-xs text-slate-400">
+            Documento gerado automaticamente pelo Sistema Clínica Social • Compliance Module
+        </footer>
+
+    </div>
+</body>
+
+</html>

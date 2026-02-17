@@ -97,7 +97,7 @@ const AdminApp: React.FC = () => {
       case 'financial':
         return <FinancialManagement />;
       case 'reports':
-        return <Reports patients={patients} volunteers={volunteers} appointments={appointments} />;
+        return <Reports patients={patients} volunteers={volunteers} appointments={appointments} currentUser={user || undefined} />;
       case 'settings':
         return <AdminSettings currentUser={user} />;
       default:
