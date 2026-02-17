@@ -1,0 +1,15 @@
+
+fastapi
+uvicorn
+gunicorn
+sqlmodel
+psycopg2-binary
+python-dotenv
+httpx
+pytest
+requests
+pydantic-settings
+pytest-cov
+sentry-sdk
+python-multipart
+slowapi

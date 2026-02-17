@@ -1,0 +1,450 @@
+{
+    "users": [
+        {
+            "username": "admin@clinica.com",
+            "name": "Administrador Demo",
+            "avatar": null,
+            "role": "ADMIN",
+            "id": "1d7dfc34-2531-4a21-bc8d-e1852ee61570",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "volunteer_id": null
+        }
+    ],
+    "patients": [
+        {
+            "id": "746a0a77-d16c-4e43-8abe-eb93e6cfa350",
+            "rg": null,
+            "whatsapp": "(11) 99701-7680",
+            "address": {
+                "city": "Belo Horizonte",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Lygia Fagundes Telles",
+            "cpf": "295.998.472-54",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "36aad734-06fe-4435-8d2d-a13d6a5a5ae0",
+            "rg": null,
+            "whatsapp": "(11) 99324-1513",
+            "address": {
+                "city": "São Paulo",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Vinicius de Moraes",
+            "cpf": "824.453.277-62",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "4bcd43c2-7813-4453-b6c5-5607740699ee",
+            "rg": null,
+            "whatsapp": "(11) 94158-1354",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Lygia Fagundes Telles",
+            "cpf": "192.898.105-58",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "6382d7a8-b3ee-4962-afa8-bfc6421a28cb",
+            "rg": null,
+            "whatsapp": "(11) 99971-6417",
+            "address": {
+                "city": "Salvador",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Machado de Assis",
+            "cpf": "178.683.981-97",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "ed9dae00-e803-4d35-ba19-97f927956f47",
+            "rg": null,
+            "whatsapp": "(11) 96021-3190",
+            "address": {
+                "city": "Recife",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Bentinho",
+            "cpf": "841.569.796-92",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "c86c0903-68c3-443f-beff-166e1ed2e91c",
+            "rg": null,
+            "whatsapp": "(11) 91564-5303",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Cecília Meireles",
+            "cpf": "666.312.825-98",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "87f7ba55-d83b-4bad-a7e6-6415d8f5a589",
+            "rg": null,
+            "whatsapp": "(11) 97807-2064",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Rachel de Queiroz",
+            "cpf": "298.334.274-41",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "c234955d-100e-4a75-8737-1a4743297cc4",
+            "rg": null,
+            "whatsapp": "(11) 93740-1602",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Machado de Assis",
+            "cpf": "232.758.515-71",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "56e51851-6409-4bdd-870a-c8a3531fcd95",
+            "rg": null,
+            "whatsapp": "(11) 95261-7670",
+            "address": {
+                "city": "Salvador",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Brás Cubas",
+            "cpf": "858.774.559-10",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "16fe4770-2a50-48fa-96d1-d78da8edd158",
+            "rg": null,
+            "whatsapp": "(11) 94563-6089",
+            "address": {
+                "city": "Salvador",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Brás Cubas",
+            "cpf": "350.871.988-57",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "5ae5a4ab-fc60-4a78-a486-d13edf5f3acd",
+            "rg": null,
+            "whatsapp": "(11) 93511-2838",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Vinicius de Moraes",
+            "cpf": "725.735.870-84",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "2a15eb4e-5e07-42b6-8e2d-c690cbc0ff0e",
+            "rg": null,
+            "whatsapp": "(11) 93846-8378",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Capitu",
+            "cpf": "855.864.938-69",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "fa529bc0-9c2f-484a-a495-bf58065d67bd",
+            "rg": null,
+            "whatsapp": "(11) 97464-4803",
+            "address": {
+                "city": "Salvador",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Monteiro Lobato",
+            "cpf": "395.303.518-27",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "4d28cacc-650d-43e0-9de8-0afd1173f48c",
+            "rg": null,
+            "whatsapp": "(11) 93932-5460",
+            "address": {
+                "city": "Rio de Janeiro",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Brás Cubas",
+            "cpf": "422.653.334-24",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        },
+        {
+            "id": "a8079b3a-847e-47b7-94be-25fdbda929e3",
+            "rg": null,
+            "whatsapp": "(11) 95340-8938",
+            "address": {
+                "city": "Recife",
+                "street": "Rua Demo, 123"
+            },
+            "family_income": 5000.0,
+            "files": [],
+            "payment_table_id": null,
+            "guardian_cpf": null,
+            "name": "Brás Cubas",
+            "cpf": "607.197.480-12",
+            "birth_date": "1990-01-01",
+            "email": null,
+            "personal_income": 2500.0,
+            "observations": null,
+            "photo": null,
+            "guardian_name": null,
+            "guardian_phone": null
+        }
+    ],
+    "volunteers": [
+        {
+            "name": "Dr(a). Rachel",
+            "id": "eade8f19-b5f3-43c3-b269-def3df39fe32",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "phone": "(11) 99999-9999",
+            "license_number": "CRM/SP 123456",
+            "files": [],
+            "photo": null,
+            "email": "medico0@clinica.com",
+            "birth_date": "1980-01-01",
+            "specialty": "Clinico Geral",
+            "availability": [],
+            "active": true
+        },
+        {
+            "name": "Dr(a). Bentinho",
+            "id": "66598daf-f26b-4592-8b8e-da3a6160d711",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "phone": "(11) 99999-9999",
+            "license_number": "CRM/SP 123456",
+            "files": [],
+            "photo": null,
+            "email": "medico1@clinica.com",
+            "birth_date": "1980-01-01",
+            "specialty": "Clinico Geral",
+            "availability": [],
+            "active": true
+        },
+        {
+            "name": "Dr(a). Bentinho",
+            "id": "3af45938-6cad-41ae-905d-87a54957f235",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "phone": "(11) 99999-9999",
+            "license_number": "CRM/SP 123456",
+            "files": [],
+            "photo": null,
+            "email": "medico2@clinica.com",
+            "birth_date": "1980-01-01",
+            "specialty": "Clinico Geral",
+            "availability": [],
+            "active": true
+        },
+        {
+            "name": "Dr(a). Vinicius",
+            "id": "37354a4b-a1cc-4993-b82c-0963788f1124",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "phone": "(11) 99999-9999",
+            "license_number": "CRM/SP 123456",
+            "files": [],
+            "photo": null,
+            "email": "medico3@clinica.com",
+            "birth_date": "1980-01-01",
+            "specialty": "Clinico Geral",
+            "availability": [],
+            "active": true
+        },
+        {
+            "name": "Dr(a). Graciliano",
+            "id": "214d0cc3-c8d6-406b-8792-3d7c59819fd9",
+            "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWrn3ILAVz.P.b0.d5e2e",
+            "phone": "(11) 99999-9999",
+            "license_number": "CRM/SP 123456",
+            "files": [],
+            "photo": null,
+            "email": "medico4@clinica.com",
+            "birth_date": "1980-01-01",
+            "specialty": "Clinico Geral",
+            "availability": [],
+            "active": true
+        }
+    ],
+    "specialties": [
+        {
+            "name": "Cardiologia",
+            "id": "a85ff278-9594-4b5c-aed0-d8259bacab39",
+            "anamnesis_type": "general"
+        },
+        {
+            "name": "Psicologia",
+            "id": "b4c4bfcc-5308-48b8-b017-bff1371ffef7",
+            "anamnesis_type": "general"
+        },
+        {
+            "name": "Nutrição",
+            "id": "43cafd80-011d-4f12-91e0-e20ca9eb7761",
+            "anamnesis_type": "general"
+        },
+        {
+            "name": "Clinica Geral",
+            "id": "4f67e334-a24a-4bac-9913-9910c2fe0d1b",
+            "anamnesis_type": "general"
+        },
+        {
+            "name": "Pediatria",
+            "id": "a6cb8f36-bb2b-403f-9750-f9cfa3932354",
+            "anamnesis_type": "general"
+        }
+    ],
+    "appointments": [],
+    "medical_records": [],
+    "transactions": [],
+    "clinic_settings": [],
+    "payment_tables": [],
+    "form_templates": []
+}
