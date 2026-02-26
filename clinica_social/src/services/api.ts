@@ -1,6 +1,7 @@
 import { Patient, Volunteer, Appointment, User, Role, PaymentTable, SpecialtyItem, ClinicSettings } from '../types';
 
-const API_BASE = 'http://localhost:8000/api/v1';
+// fallback for local dev vs production
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
 export const api = {
 
