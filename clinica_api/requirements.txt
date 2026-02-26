@@ -13,3 +13,4 @@ pytest-cov
 sentry-sdk
 python-multipart
 slowapi
+boto3

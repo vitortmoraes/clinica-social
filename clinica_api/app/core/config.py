@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./clinica.db"
 
+    # AWS S3 Configurations
+    AWS_REGION: str = "sa-east-1"
+    S3_BUCKET_NAME: str = "clinica-cuidar-storage-vitor"
+
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

@@ -35,5 +35,7 @@ from app.api.endpoints import public
 api_router.include_router(public.router, prefix="/public", tags=["public"])
 
 from app.api.endpoints import admin
-
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
+
+from app.api.endpoints import files
+api_router.include_router(files.router, prefix="/files", tags=["files"])
