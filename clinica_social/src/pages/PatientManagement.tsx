@@ -86,16 +86,12 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
   const loadData = async () => {
     setLoading(true);
     try {
-      const patientsData = await api.getPatients().catch(e => {
-        console.error("Failed to load patients:", e);
-        return [];
-      });
-      const tablesData = await api.getPaymentTables().catch(e => {
-        console.error("Failed to load payment tables:", e);
-        return [];
-      });
-      setPatients(patientsData);
-      setPaymentTables(tablesData);
+      const [patientsRes, tablesRes] = await Promise.allSettled([
+        api.getPatients(),
+        api.getPaymentTables()
+      ]);
+      setPatients(patientsRes.status === 'fulfilled' ? patientsRes.value : []);
+      setPaymentTables(tablesRes.status === 'fulfilled' ? tablesRes.value : []);
     } catch (err) {
       console.error(err);
     } finally {

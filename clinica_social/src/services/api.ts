@@ -185,12 +185,12 @@ export const api = {
         if (filters?.patient_id) params.append('patient_id', filters.patient_id);
         if (filters?.date) params.append('date', filters.date);
 
-        const response = await fetch(`${API_BASE}/appointments/?${params}`);
+        const response = await fetch(`${API_BASE}/appointments?${params}`);
         if (!response.ok) throw new Error('Failed to fetch appointments');
         return await response.json();
     },
     createAppointment: async (appointment: Omit<import('../types').Appointment, 'id'>) => {
-        const response = await fetch(`${API_BASE}/appointments/`, {
+        const response = await fetch(`${API_BASE}/appointments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(appointment),
@@ -200,7 +200,7 @@ export const api = {
         return await response.json();
     },
     updateAppointment: async (appointment: import('../types').Appointment) => {
-        const response = await fetch(`${API_BASE}/appointments/${appointment.id}/`, {
+        const response = await fetch(`${API_BASE}/appointments/${appointment.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(appointment),
@@ -210,7 +210,7 @@ export const api = {
         return await response.json();
     },
     deleteAppointment: async (id: string) => {
-        const response = await fetch(`${API_BASE}/appointments/${id}/`, {
+        const response = await fetch(`${API_BASE}/appointments/${id}`, {
             method: 'DELETE',
         });
         if (!response.ok) throw new Error('Failed to delete appointment');

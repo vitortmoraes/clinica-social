@@ -582,7 +582,7 @@ const AppointmentManagement: React.FC<AppointmentManagementProps> = ({ appointme
                                 handleEdit(slot.appointment);
                               }
                             }}
-                            className={`py-2 rounded-lg text-sm font-semibold border transition-all relative overflow-hidden
+                            className={`min-h-[44px] py-2 rounded-lg text-sm font-semibold border transition-all relative overflow-hidden flex items-center justify-center
                                 ${slot.status === 'booked'
                                 ? 'bg-red-50 border-red-100 text-red-500 cursor-pointer hover:bg-red-100' // Visual style for booked (interactive)
                                 : selectedTime === slot.time
