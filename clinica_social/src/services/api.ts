@@ -7,7 +7,7 @@ export const api = {
 
     getPatients: async (): Promise<Patient[]> => {
         try {
-            const response = await fetch(`${API_BASE}/patients/`);
+            const response = await fetch(`${API_BASE}/patients`);
             if (!response.ok) {
                 throw new Error(`Erro na API: ${response.statusText}`);
             }
