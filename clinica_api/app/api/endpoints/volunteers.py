@@ -15,13 +15,13 @@ from app.services.audit_service import create_audit_log
 router = APIRouter()
 
 
-@router.get("/", response_model=List[VolunteerRead])
+@router.get("", response_model=List[VolunteerRead])
 def read_volunteers(session: Session = Depends(get_session)):
     volunteers = session.exec(select(Volunteer).where(Volunteer.active == True)).all()
     return volunteers
 
 
-@router.post("/", response_model=VolunteerRead)
+@router.post("", response_model=VolunteerRead)
 def create_volunteer(
     volunteer_in: VolunteerCreate,
     session: Session = Depends(get_session),

@@ -282,15 +282,19 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
                             if (svg && !formData.photo) svg.classList.remove('hidden');
                           } else {
                             // Start Camera
-                            navigator.mediaDevices.getUserMedia({ video: true })
-                              .then(stream => {
-                                video.srcObject = stream;
-                                video.play();
-                                video.classList.remove('hidden');
-                                if (img) img.classList.add('hidden');
-                                if (svg) svg.classList.add('hidden');
-                              })
-                              .catch(err => alert("Erro ao acessar câmera: " + err));
+                            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                              navigator.mediaDevices.getUserMedia({ video: true })
+                                .then(stream => {
+                                  video.srcObject = stream;
+                                  video.play();
+                                  video.classList.remove('hidden');
+                                  if (img) img.classList.add('hidden');
+                                  if (svg) svg.classList.add('hidden');
+                                })
+                                .catch(err => alert("Erro ao acessar câmera: " + err));
+                            } else {
+                              alert("A câmera não abre neste ambiente (navegador bloqueia por falta de HTTPS). Por favor, adicione a foto enviando o arquivo (ícone de clipe/seta).");
+                            }
                           }
                         }}
                       >

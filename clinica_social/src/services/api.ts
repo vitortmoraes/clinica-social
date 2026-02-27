@@ -135,7 +135,7 @@ export const api = {
     },
     getVolunteers: async (): Promise<import('../types').Volunteer[]> => {
         try {
-            const response = await fetch(`${API_BASE}/volunteers/`);
+            const response = await fetch(`${API_BASE}/volunteers`);
             if (!response.ok) throw new Error('Failed to fetch volunteers');
             return await response.json();
         } catch (error) {
