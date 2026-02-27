@@ -24,8 +24,7 @@ def run():
             name="Administrador do Sistema",
             username="admin",
             password=get_password_hash("admin"),
-            role=Role.ADMIN,
-            is_active=True
+            role=Role.ADMIN
         )
         session.add(new_admin)
         session.commit()
