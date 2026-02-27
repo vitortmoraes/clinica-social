@@ -16,24 +16,23 @@ import { api } from '../services/api';
 const AdminApp: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState('dashboard');
-  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
-  const [volunteers, setVolunteers] = useState<Volunteer[]>(MOCK_VOLUNTEERS);
-  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   // Load data from API
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [p, v, a] = await Promise.all([
-          api.getPatients(),
-          api.getVolunteers(),
-          api.getAppointments()
-        ]);
+        const p = await api.getPatients().catch(e => { console.error(e); return []; });
+        const v = await api.getVolunteers().catch(e => { console.error(e); return []; });
+        const a = await api.getAppointments().catch(e => { console.error(e); return []; });
+
         setPatients(p);
         setVolunteers(v);
         setAppointments(a);
       } catch (error) {
-        console.error('Falha ao carregar dados:', error);
+        console.error('Falha ao carregar dados inesperada:', error);
       }
     };
     loadData();

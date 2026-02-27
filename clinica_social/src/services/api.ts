@@ -75,7 +75,7 @@ export const api = {
     },
     getPaymentTables: async (): Promise<import('../types').PaymentTable[]> => {
         try {
-            const response = await fetch(`${API_BASE}/payment-tables/`);
+            const response = await fetch(`${API_BASE}/payment-tables`);
             if (!response.ok) throw new Error('Failed to fetch payment tables');
             return await response.json();
         } catch (error) {
@@ -84,7 +84,7 @@ export const api = {
         }
     },
     createPaymentTable: async (data: { name: string; value: number }) => {
-        const response = await fetch(`${API_BASE}/payment-tables/`, {
+        const response = await fetch(`${API_BASE}/payment-tables`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -93,7 +93,7 @@ export const api = {
         return await response.json();
     },
     updatePaymentTable: async (id: string, data: { name: string; value: number }) => {
-        const response = await fetch(`${API_BASE}/payment-tables/${id}/`, {
+        const response = await fetch(`${API_BASE}/payment-tables/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -102,7 +102,7 @@ export const api = {
         return await response.json();
     },
     deletePaymentTable: async (id: string) => {
-        const response = await fetch(`${API_BASE}/payment-tables/${id}/`, {
+        const response = await fetch(`${API_BASE}/payment-tables/${id}`, {
             method: 'DELETE',
         });
         if (!response.ok) throw new Error('Failed to delete payment table');
