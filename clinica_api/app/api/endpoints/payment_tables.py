@@ -12,13 +12,13 @@ from app.schemas.payment_table import PaymentTableCreate
 router = APIRouter()
 
 
-@router.get("/", response_model=List[PaymentTableSchema])
+@router.get("", response_model=List[PaymentTableSchema])
 def read_payment_tables(session: Session = Depends(get_session)):
     tables = session.exec(select(PaymentTable)).all()
     return tables
 
 
-@router.post("/", response_model=PaymentTableSchema)
+@router.post("", response_model=PaymentTableSchema)
 def create_payment_table(
     table_in: PaymentTableCreate, session: Session = Depends(get_session)
 ):
