@@ -445,7 +445,7 @@ export const api = {
         },
         update: async (user: Partial<User>): Promise<User> => {
             const token = localStorage.getItem('@ClinicaSocial:token');
-            const response = await fetch(`${API_BASE}/users/${user.id}/`, {
+            const response = await fetch(`${API_BASE}/users/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

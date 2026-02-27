@@ -98,8 +98,11 @@ def update_user(
             if existing:
                 raise HTTPException(status_code=400, detail="Nome de usuário já existe")
         user.username = user_in.username
+        
     if user_in.password:
-        user.password = user_in.password
+        from app.core.security import get_password_hash
+        user.password = get_password_hash(user_in.password)
+        
     if user_in.role:
         user.role = user_in.role
 
