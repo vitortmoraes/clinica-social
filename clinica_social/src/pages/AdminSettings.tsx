@@ -397,6 +397,11 @@ const UsersManager: React.FC = () => {
           role: formData.role,
           ...(formData.password ? { password: formData.password } : {}) // Only send password if changed
         });
+
+        if (currentUser && currentUser.id === editingId && onUpdateCurrentUser) {
+          onUpdateCurrentUser({ ...currentUser, name: formData.name, username: formData.username, role: formData.role });
+        }
+
         alert('Usuário atualizado!');
         setEditingId(null);
       } else {
@@ -461,14 +466,13 @@ const UsersManager: React.FC = () => {
           <input required type="text" className="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary"
             value={formData.username} onChange={e => setFormData({ ...formData, username: e.target.value })} />
         </div>
-        <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1">
-            {editingId ? 'Nova Senha (Opcional)' : 'Senha'}
-          </label>
-          <input type={editingId ? "text" : "password"} required={!editingId} className="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary"
-            placeholder={editingId ? "Deixe em branco para manter" : ""}
-            value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
-        </div>
+        {!editingId && (
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">Senha</label>
+            <input type="password" required className="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary"
+              value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
+          </div>
+        )}
         <div>
           <label className="block text-sm font-semibold text-slate-700 mb-1">Função</label>
           <select className="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-primary"

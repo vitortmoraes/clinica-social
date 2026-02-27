@@ -99,7 +99,13 @@ const AdminApp: React.FC = () => {
       case 'reports':
         return <Reports patients={patients} volunteers={volunteers} appointments={appointments} currentUser={user || undefined} />;
       case 'settings':
-        return <AdminSettings currentUser={user} />;
+        return <AdminSettings
+          currentUser={user}
+          onUpdateCurrentUser={(updatedUser) => {
+            setUser(updatedUser);
+            localStorage.setItem('clinic_user', JSON.stringify(updatedUser));
+          }}
+        />;
       default:
         return <Dashboard patients={patients} volunteers={volunteers} appointments={filteredAppointments} />;
     }
