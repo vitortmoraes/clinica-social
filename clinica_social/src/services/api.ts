@@ -518,7 +518,7 @@ export const api = {
         if (filters?.start_date && filters.start_date.trim() !== '') params.append('start_date', filters.start_date);
         if (filters?.end_date && filters.end_date.trim() !== '') params.append('end_date', filters.end_date);
 
-        const response = await fetch(`${API_BASE}/audit?${params}`, {
+        const response = await fetch(`${API_BASE}/audit/?${params}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Failed to fetch audit logs');

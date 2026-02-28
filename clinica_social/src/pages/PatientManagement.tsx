@@ -70,12 +70,15 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
     if (!cpf) return '---';
     // If it's a long encrypted string (Fernet > 50 chars)
     if (cpf.length > 20) return '🔒 Protegido';
-    // If it's a standard CPF (11 digits or formatted)
+
+    // Always try to mask to protect sensitive data
     const clean = cpf.replace(/\D/g, '');
-    if (clean.length === 11) {
+    if (clean.length >= 11) {
       return `${clean.substr(0, 3)}.***.***-**`;
+    } else if (clean.length > 3) {
+      return `${clean.substr(0, 3)}... (Oculto)`;
     }
-    return cpf;
+    return `***.***.***-**`;
   };
 
   // Fetch Patients & Payment Tables
