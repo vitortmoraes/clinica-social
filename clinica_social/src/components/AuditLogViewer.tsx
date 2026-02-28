@@ -14,6 +14,13 @@ interface AuditLog {
     ip_address: string;
 }
 
+const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    // AWS returns naive UTC datetime strings, so we append 'Z' to explicitly parse as UTC
+    const utcDateString = dateString.endsWith('Z') ? dateString : `${dateString}Z`;
+    return new Date(utcDateString).toLocaleString('pt-BR');
+};
+
 const AuditLogViewer: React.FC = () => {
     const [logs, setLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(false);
@@ -120,7 +127,7 @@ const AuditLogViewer: React.FC = () => {
         doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 22);
 
         const tableData = logs.map(log => [
-            new Date(log.timestamp).toLocaleString('pt-BR'),
+            formatDateTime(log.timestamp),
             log.user_name,
             translateAction(log.action).label,
             translateResource(log.resource),
@@ -147,7 +154,7 @@ const AuditLogViewer: React.FC = () => {
 
     const exportExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(logs.map(log => ({
-            'Data/Hora': new Date(log.timestamp).toLocaleString('pt-BR'),
+            'Data/Hora': formatDateTime(log.timestamp),
             'Usuário': log.user_name,
             'Ação': translateAction(log.action).label,
             'Recurso': log.resource,
@@ -210,7 +217,7 @@ const AuditLogViewer: React.FC = () => {
                             return (
                                 <tr key={log.id} className="hover:bg-slate-50 transition-colors">
                                     <td className="px-4 py-3 text-slate-600">
-                                        {new Date(log.timestamp).toLocaleString('pt-BR')}
+                                        {formatDateTime(log.timestamp)}
                                     </td>
                                     <td className="px-4 py-3 font-medium text-slate-800">{log.user_name}</td>
                                     <td className="px-4 py-3">
