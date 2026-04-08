@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Patient, PaymentTable } from '../types';
 import { api } from '../services/api';
+import { createPortal } from 'react-dom';
 import ConsentPrint from './ConsentPrint';
+import { SkeletonTable } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
 
 
 interface PatientManagementProps {
@@ -236,7 +239,7 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
     });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6">
       {/* Header & Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -268,22 +271,31 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
+            <thead className="bg-slate-50/50 border-b border-slate-100">
               <tr>
-                <th onClick={() => setSortField('name')} className="cursor-pointer hover:bg-slate-100 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <th onClick={() => setSortField('name')} className="cursor-pointer hover:bg-slate-100 px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
                   Nome / CPF
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Contato</th>
-                <th onClick={() => setSortField('birth_date')} className="cursor-pointer hover:bg-slate-100 px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Contato</th>
+                <th onClick={() => setSortField('birth_date')} className="cursor-pointer hover:bg-slate-100 px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
                   Nascimento
                 </th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Endereço</th>
-                <th className="px-6 py-4 w-48 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Ações</th>
+                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Endereço</th>
+                <th className="px-6 py-4 w-48 text-right text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan={6} className="p-8 text-center text-slate-500">Carregando...</td></tr>
+                <tr><td colSpan={5} className="p-6"><SkeletonTable rows={4} /></td></tr>
+              ) : filteredPatients.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8">
+                    <EmptyState 
+                      title="Nenhum paciente encontrado" 
+                      description="A comunidade de pacientes está vazia ou a sua busca não retornou resultados."
+                    />
+                  </td>
+                </tr>
               ) : filteredPatients.map((p) => {
                 const tableDetails = getPaymentTableDetails(p.payment_table_id);
                 return (
@@ -334,8 +346,8 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
       </div>
 
       {/* Modal - Cadastro Completo */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center p-4 overflow-y-auto">
+      {isModalOpen && createPortal(
+        <div className="fixed top-0 left-0 w-full h-full bg-slate-900/60 backdrop-blur-md z-[9999] flex justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl w-full max-w-4xl p-8 shadow-2xl animate-in fade-in zoom-in duration-200 mt-10 mb-10 h-fit">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-slate-800">
@@ -572,7 +584,7 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
                         <span className="text-sm text-slate-500">Arraste arquivos JPG ou PDF aqui ou <span className="text-primary font-semibold">clique para selecionar</span></span>
                         <input id="file-upload" type="file" className="hidden" multiple accept=".pdf,.jpg,.jpeg,.png" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           if (e.target.files && e.target.files.length > 0) {
-                            Array.from(e.target.files).forEach(file => {
+                            Array.from(e.target.files).forEach((file: any) => {
                               const reader = new FileReader();
                               reader.onloadend = () => {
                                 setFormData(prev => ({
@@ -676,12 +688,13 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-all">Cancelar</button>
-                <button type="submit" className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-green-100 hover:bg-green-800 transition-all">Salvar Dados</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all text-center">Cancelar</button>
+                <button type="submit" className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-green-100 hover:bg-green-800 transition-all text-center">Salvar Dados</button>
               </div>
             </form>
           </div>
-        </div >
+        </div>,
+        document.body
       )}
 
       {/* Modal - Confirmação de Exclusão */}
@@ -701,13 +714,13 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModalOpen(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all text-center"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={confirmDelete}
-                  className="flex-1 bg-red-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all"
+                  className="flex-1 bg-red-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-red-100 hover:bg-red-700 transition-all text-center"
                 >
                   Sim, Excluir
                 </button>
@@ -740,13 +753,13 @@ const PatientManagement: React.FC<PatientManagementProps> = ({ onAddPatient }) =
               <div className="flex gap-3">
                 <button
                   onClick={() => setAnonymizeModalOpen(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all text-center"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={confirmAnonymize}
-                  className="flex-1 bg-orange-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all"
+                  className="flex-1 bg-orange-600 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all text-center"
                 >
                   Confirmar
                 </button>

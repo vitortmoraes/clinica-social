@@ -215,7 +215,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ currentUser }) => {
           </button>
           {openSection === 'users' && (
             <div className="p-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-200">
-              <UsersManager />
+              <UsersManager currentUser={currentUser} />
             </div>
           )}
         </div>
@@ -363,7 +363,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ currentUser }) => {
 
 // ... existing code ...
 
-const UsersManager: React.FC = () => {
+const UsersManager: React.FC<{ currentUser?: import('../types').User; onUpdateCurrentUser?: (u: import('../types').User) => void }> = ({ currentUser, onUpdateCurrentUser }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ name: '', username: '', password: '', role: 'STAFF' });
@@ -489,7 +489,7 @@ const UsersManager: React.FC = () => {
       <div className="space-y-2">
         <h3 className="font-bold text-slate-800">Usuários do Sistema</h3>
         {users.map(u => (
-          <div key={u.id} className={`flex justify-between items-center p-4 border rounded-xl ${editingId === u.id ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500' : 'bg-white border-slate-100'}`}>
+          <div key={u.id} className={`flex justify-between items-center p-4 border rounded-xl hover:shadow-md transition-all duration-300 ${editingId === u.id ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500' : 'bg-white border-slate-100'}`}>
             <div>
               <p className="font-bold text-slate-800">{u.name}</p>
               <p className="text-xs text-slate-500">{u.username} • {u.role}</p>
@@ -797,7 +797,7 @@ const SpecialtiesManager: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {specialties.map(spec => (
-          <div key={spec.id} className="bg-white p-4 rounded-xl border border-slate-100 flex justify-between items-center group hover:shadow-md transition-all">
+          <div key={spec.id} className="bg-white p-4 rounded-xl border border-slate-100 flex justify-between items-center group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
             <span className="font-bold text-slate-700">{spec.name}</span>
             <button
               onClick={() => handleDelete(spec.id)}
@@ -983,10 +983,12 @@ const BackupManager: React.FC = () => {
 
   const handleSaveSchedule = async () => {
     try {
-      await api.settings.update({
-        backup_frequency: schedule.frequency,
-        backup_time: schedule.time
-      });
+        await api.settings.update({
+          // @ts-ignore
+          backup_frequency: schedule.frequency,
+          // @ts-ignore
+          backup_time: schedule.time
+        });
       alert('Agendamento salvo com sucesso!');
     } catch (e) {
       alert('Erro ao salvar agendamento.');

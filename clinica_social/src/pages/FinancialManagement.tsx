@@ -3,6 +3,7 @@ import { api } from '../services/api';
 import { DailyStats, Transaction, PaymentMethod, TransactionType, Patient } from '../types';
 import { format } from 'date-fns';
 import PatientFinancialHistory from '../components/organisms/PatientFinancialHistory';
+import { EmptyState } from '../components/ui/EmptyState';
 
 const FinancialManagement: React.FC = () => {
     const [viewDate, setViewDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -138,42 +139,42 @@ const FinancialManagement: React.FC = () => {
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Income */}
-                        <div className="bg-green-600 text-white p-6 rounded-3xl shadow-lg shadow-green-200">
+                        <div className="bg-white p-6 rounded-3xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="opacity-80 font-medium mb-1">Total Entradas</p>
-                                    <h2 className="text-3xl font-black">R$ {stats.total_income.toFixed(2)}</h2>
+                                    <p className="text-slate-500 font-medium mb-1">Total Entradas</p>
+                                    <h2 className="text-3xl font-black text-slate-800">R$ {stats.total_income.toFixed(2)}</h2>
                                 </div>
-                                <div className="bg-white/20 p-2 rounded-lg">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" /></svg>
+                                <div className="bg-emerald-50 p-3 rounded-2xl">
+                                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" /></svg>
                                 </div>
                             </div>
                         </div>
 
                         {/* Expenses */}
-                        <div className="bg-red-500 text-white p-6 rounded-3xl shadow-lg shadow-red-200">
+                        <div className="bg-white p-6 rounded-3xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="opacity-80 font-medium mb-1">Total Saídas</p>
-                                    <h2 className="text-3xl font-black">R$ {stats.total_expense.toFixed(2)}</h2>
+                                    <p className="text-slate-500 font-medium mb-1">Total Saídas</p>
+                                    <h2 className="text-3xl font-black text-slate-800">R$ {stats.total_expense.toFixed(2)}</h2>
                                 </div>
-                                <div className="bg-white/20 p-2 rounded-lg">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" /></svg>
+                                <div className="bg-rose-50 p-3 rounded-2xl">
+                                    <svg className="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" /></svg>
                                 </div>
                             </div>
                         </div>
 
                         {/* Balance */}
-                        <div className={`p-6 rounded-3xl shadow-lg border-2 ${stats.balance >= 0 ? 'bg-white border-blue-100 shadow-blue-50' : 'bg-red-50 border-red-100 shadow-red-50'}`}>
+                        <div className="bg-white p-6 rounded-3xl shadow-lg shadow-slate-100/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="text-slate-500 font-medium mb-1">Saldo Líquido</p>
-                                    <h2 className={`text-3xl font-black ${stats.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                                    <h2 className={`text-3xl font-black ${stats.balance >= 0 ? 'text-blue-600' : 'text-slate-800'}`}>
                                         R$ {stats.balance.toFixed(2)}
                                     </h2>
                                 </div>
-                                <div className={`p-2 rounded-lg ${stats.balance >= 0 ? 'bg-blue-50' : 'bg-red-100'}`}>
-                                    <svg className={`w-6 h-6 ${stats.balance >= 0 ? 'text-blue-600' : 'text-red-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <div className={`p-3 rounded-2xl ${stats.balance >= 0 ? 'bg-blue-50' : 'bg-slate-50'}`}>
+                                    <svg className={`w-6 h-6 ${stats.balance >= 0 ? 'text-blue-600' : 'text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                             </div>
                         </div>
@@ -209,7 +210,7 @@ const FinancialManagement: React.FC = () => {
                     <h3 className="font-bold text-slate-800">Movimentações do Dia</h3>
                 </div>
                 <table className="w-full">
-                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-bold text-left">
+                    <thead className="bg-slate-50/50 text-slate-400 text-[11px] uppercase tracking-wider font-extrabold text-left">
                         <tr>
                             <th className="px-8 py-4">Horário</th>
                             <th className="px-8 py-4">Paciente</th>
@@ -270,8 +271,11 @@ const FinancialManagement: React.FC = () => {
                         })}
                         {transactions.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="px-8 py-12 text-center text-slate-400">
-                                    Nenhuma movimentação neste dia.
+                                <td colSpan={6} className="p-8">
+                                    <EmptyState 
+                                        title="Nenhuma Movimentação" 
+                                        description="Você ainda não possui transações (entradas ou saídas) registradas nesta data."
+                                    />
                                 </td>
                             </tr>
                         )}
@@ -286,13 +290,13 @@ const FinancialManagement: React.FC = () => {
             />
 
             {/* Expense Entry Section */}
-            <div className="bg-white rounded-3xl border border-red-100 shadow-sm overflow-hidden">
-                <div className="px-8 py-6 border-b border-red-50 bg-red-50/30">
-                    <h3 className="font-bold text-red-800 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/30">
+                    <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         Registrar Despesa (Saída de Caixa)
                     </h3>
-                    <p className="text-red-600 text-sm mt-1">Lance aqui pagamentos diversos feitos pelo caixa (café, material, etc).</p>
+                    <p className="text-slate-500 text-sm mt-1">Lance aqui pagamentos diversos feitos pelo caixa (café, material, etc).</p>
                 </div>
                 <div className="p-8">
                     <div className="flex flex-wrap md:flex-nowrap gap-4 items-end">
@@ -340,7 +344,7 @@ const FinancialManagement: React.FC = () => {
                         <button
                             onClick={handleCreateExpense}
                             disabled={loading || !expenseDesc || !expenseAmount}
-                            className="bg-red-600 text-white font-bold px-6 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-100 disabled:opacity-50 h-[42px]"
+                            className="bg-slate-800 text-white font-bold px-6 py-2 rounded-xl hover:bg-slate-900 transition-colors shadow-lg shadow-slate-200 disabled:opacity-50 h-[42px]"
                         >
                             Registrar
                         </button>

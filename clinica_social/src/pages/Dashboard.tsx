@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 // Fix: Added missing IncomeLevel import
 import { Patient, Volunteer, Appointment } from '../types';
 import { getDailyBriefing } from '../services/geminiService';
+import { Card } from '../components/ui/Card';
 
 import { api } from '../services/api';
 
@@ -94,21 +95,21 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
   }, [financialFilter]);
 
   const stats = [
-    { label: 'Total de Pacientes', value: patients.length, color: 'bg-blue-100 text-blue-700', icon: '👤' },
-    { label: 'Voluntários Cadastrados', value: volunteers.length, color: 'bg-green-100 text-green-700', icon: '🤝' },
-    { label: 'Consultas Hoje', value: todayAppointments.length, color: 'bg-green-100 text-green-700', icon: '📅' },
-    { label: 'Especialidades', value: specialtiesCount, color: 'bg-purple-100 text-purple-700', icon: '🏥' },
+    { label: 'Total de Pacientes', value: patients.length, color: 'bg-blue-50 text-blue-600 border border-blue-100', icon: '👤' },
+    { label: 'Voluntários Cadastrados', value: volunteers.length, color: 'bg-emerald-50 text-emerald-600 border border-emerald-100', icon: '🤝' },
+    { label: 'Consultas Hoje', value: todayAppointments.length, color: 'bg-rose-50 text-rose-600 border border-rose-100', icon: '📅' },
+    { label: 'Especialidades', value: specialtiesCount, color: 'bg-purple-50 text-purple-600 border border-purple-100', icon: '🏥' },
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <Card className="p-8 relative overflow-hidden !rounded-3xl border-0 shadow-md">
         <div className="relative z-10">
           <h1 className="text-3xl font-bold text-slate-800 mb-2">Bom dia, Administrador!</h1>
           <p className="text-slate-500 mb-6 max-w-2xl">
             Bem-vindo ao painel de controle da Clínica Cuidar. Aqui você gerencia o amor em forma de atendimento.
           </p>
-          <div className="bg-surface border-l-4 border-primary p-6 rounded-r-xl">
+          <div className="bg-slate-50 border-l-4 border-primary p-6 rounded-r-xl border border-y-slate-100 border-r-slate-100 shadow-sm">
             <h3 className="font-bold text-primary mb-2 flex items-center gap-2">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1a1 1 0 112 0v1a1 1 0 11-2 0zM13.336 16.336a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM16.336 13.336a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM4.343 14.243a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414l-.707.707z" /></svg>
               Mensagem Inspiradora (IA)
@@ -119,11 +120,11 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
         <div className="absolute top-0 right-0 -mt-10 -mr-10 opacity-5">
           <svg className="w-64 h-64 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-2.75-.174l-.209-.025a1 1 0 00-1.151.798c-.186.76.591 1.447 1.341 1.258l.21-.025c1.458-.182 2.845-.593 4.148-1.213a.999.999 0 01.348-.124l7-3a1 1 0 00.394-1.714l-7 3a1 1 0 00-.787 0l-1.94-.832z" /></svg>
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+          <Card key={i} className="flex items-center justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-slate-100">
             <div>
               <p className="text-slate-500 text-sm font-medium">{stat.label}</p>
               <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
@@ -131,12 +132,12 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
             <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center text-xl`}>
               {stat.icon}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <Card className="flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-slate-800">Próximos Atendimentos</h2>
             <input
@@ -186,9 +187,9 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
               <p className="text-slate-400 text-center py-10">Nenhuma consulta agendada para esta data.</p>
             )}
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <Card className="flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-bold text-slate-800">Distribuição de Renda</h2>
@@ -229,12 +230,12 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
             <p className="text-slate-500 text-center py-10">Não foi possível carregar os dados.</p>
           ) : (
             <div className="space-y-6">
-              <div className="text-center py-6 bg-green-50 rounded-2xl border border-green-100">
-                <p className="text-sm text-green-600 font-medium mb-1">Valor em Caixa (Saldo)</p>
-                <h3 className="text-4xl font-bold text-green-700">
+              <div className="text-center py-8 bg-white border border-emerald-100 rounded-3xl shadow-lg shadow-emerald-50 hover:-translate-y-1 transition-all duration-300">
+                <p className="text-sm text-emerald-600 font-bold mb-2 uppercase tracking-wider">Valor em Caixa (Saldo)</p>
+                <h3 className="text-4xl font-black text-emerald-700">
                   {showValues ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(financialStats.total_income) : 'R$ ••••••'}
                 </h3>
-                <p className="text-xs text-green-500 mt-2">{financialStats.transaction_count} movimentações no período</p>
+                <p className="text-xs text-emerald-500/80 mt-3 font-medium">{financialStats.transaction_count} movimentações no período</p>
               </div>
 
               <div className="space-y-3">
@@ -261,10 +262,10 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
               </div>
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Birthdays Section */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <Card className="flex flex-col">
           <div className="flex items-center gap-2 mb-6">
             <span className="text-2xl">🎉</span>
             <h2 className="text-xl font-bold text-slate-800">Aniversariantes da Semana</h2>
@@ -296,7 +297,7 @@ const Dashboard: React.FC<DashboardProps> = ({ patients, volunteers, appointment
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

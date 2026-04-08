@@ -6,6 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { SkeletonCardList } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
 
 const VolunteerDashboard: React.FC = () => {
     const { user, signOut } = useAuth();
@@ -83,19 +85,17 @@ const VolunteerDashboard: React.FC = () => {
             {/* List */}
             <main className="max-w-5xl mx-auto px-4 py-8">
                 {loading ? (
-                    <div className="text-center py-12 text-slate-400">Carregando agenda...</div>
+                    <SkeletonCardList count={3} />
                 ) : appointments.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="bg-white rounded-2xl shadow-sm p-8 inline-block">
-                            <span className="text-4xl">📅</span>
-                            <h3 className="mt-4 font-bold text-slate-700">Agenda Vazia</h3>
-                            <p className="text-slate-500">Você não tem atendimentos agendados para hoje.</p>
-                        </div>
-                    </div>
+                    <EmptyState 
+                        title="Agenda Vazia" 
+                        description="Você não tem atendimentos agendados para hoje. Fique tranquilo(a), o seu dia está livre!" 
+                        icon={<span className="text-3xl">📅</span>} 
+                    />
                 ) : (
                     <div className="space-y-4">
                         {appointments.map(appt => (
-                            <div key={appt.id} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex justify-between items-center hover:shadow-md transition-shadow">
+                            <div key={appt.id} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex justify-between items-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className={`text-xs font-bold px-2 py-1 rounded-md uppercase ${getStatusColor(appt.status || 'scheduled')}`}>

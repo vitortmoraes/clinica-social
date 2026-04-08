@@ -161,6 +161,8 @@ export interface ClinicSettings {
   website?: string;
   logo_url?: string;
   primary_color: string;
+  backup_frequency?: string;
+  backup_time?: string;
 }
 
 export interface MedicalRecord {

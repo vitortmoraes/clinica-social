@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { User, Role } from '../../types';
 import { api } from '../../services/api';
+import './Sidebar.css';
 
 interface SidebarProps {
   currentView: string;
   setCurrentView: (view: string) => void;
   user: User;
   onLogout: () => void;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, user, onLogout }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, user, onLogout, isOpen, setIsOpen }) => {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Busca a logo dinâmica das configurações da clínica
     api.settings.get()
       .then(settings => {
         if (settings && settings.logo_url) {
@@ -35,46 +37,48 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, user, on
 
   const menuItems = allMenuItems.filter(item => item.roles.includes(user.role));
 
+  const handleMenuClick = (id: string) => {
+    setCurrentView(id);
+    if (window.innerWidth <= 768) {
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="w-64 bg-primary text-white min-h-screen p-4 flex flex-col fixed left-0 top-0 z-40 shadow-xl">
-      <div className="flex flex-col items-center gap-3 mb-10 px-2 mt-6">
-        <div className="bg-white/90 p-3 rounded-2xl shadow-lg w-full flex justify-center h-[104px] items-center">
-          <img src={logoUrl || "/logo_cuidar.png"} alt="Clínica Cuidar" className="max-h-20 object-contain w-full" />
+    <>
+      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)}></div>
+      <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-logo-box">
+          <img src={logoUrl || "/logo_cuidar.png"} alt="Clínica Cuidar" className="sidebar-logo" />
         </div>
-      </div>
 
-      <nav className="flex-1 space-y-2">
-        {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setCurrentView(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${currentView === item.id
-              ? 'bg-secondary text-primary shadow-lg border-l-4 border-white'
-              : 'text-white/80 hover:bg-white/10 hover:translate-x-1'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-            </svg>
-            <span>{item.label}</span>
+        <nav className="sidebar-nav">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleMenuClick(item.id)}
+              className={`sidebar-link ${currentView === item.id ? 'active' : ''}`}
+            >
+              <svg className="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+              </svg>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <p className="sidebar-user-role">{user.role}</p>
+            <p className="sidebar-user-name">{user.name}</p>
+          </div>
+          <button onClick={onLogout} className="sidebar-logout-btn">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            Sair da Conta
           </button>
-        ))}
-      </nav>
-
-      <div className="mt-auto pt-6 px-4 border-t border-white/20 pb-4">
-        <div className="flex flex-col mb-4">
-          <p className="text-xs text-secondary uppercase font-bold tracking-widest">{user.role}</p>
-          <p className="text-sm font-semibold truncate">{user.name}</p>
         </div>
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-500/10 hover:bg-500/20 text-red-200 rounded-lg transition-all"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-          Sair da Conta
-        </button>
       </div>
-    </div>
+    </>
   );
 };
 

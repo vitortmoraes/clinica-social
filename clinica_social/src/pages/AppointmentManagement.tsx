@@ -4,6 +4,7 @@ import PaymentModal from '../components/PaymentModal';
 import { api } from '../services/api';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths, parse, addHours, addMinutes, isBefore, startOfToday, isAfter } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { EmptyState } from '../components/ui/EmptyState';
 
 interface AppointmentManagementProps {
   appointments: Appointment[];
@@ -261,16 +262,18 @@ const AppointmentManagement: React.FC<AppointmentManagementProps> = ({ appointme
         </div>
 
         {displayAppointments.length === 0 ? (
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 text-slate-400 text-center text-sm">
-            Nenhuma consulta futura agendada.
-          </div>
+          <EmptyState 
+             title="Agenda Livre"
+             description="Nenhuma consulta futura encontrada para esta seleção."
+             icon={<span className="text-3xl text-slate-300">☕</span>}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {displayAppointments.map(app => {
               const p = patients.find(show => show.id === app.patient_id);
               const v = volunteers.find(vol => vol.id === app.volunteer_id);
               return (
-                <div key={app.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col gap-3 group relative">
+                <div key={app.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col gap-3 group relative">
                   <div className="flex justify-between items-start">
                     <span className="bg-green-50 text-green-700 text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1">
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>

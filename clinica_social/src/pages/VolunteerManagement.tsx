@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Volunteer, Specialty, SpecialtyItem, AppointmentStatus, Availability } from '../types';
 import ConsentPrint from './ConsentPrint';
 import { api } from '../services/api';
+import { createPortal } from 'react-dom';
 
 interface VolunteerManagementProps {
   volunteers: Volunteer[];
@@ -109,6 +110,7 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
       onDeleteVolunteer(volunteerToDelete.id); // Sync with parent
       setDeleteModalOpen(false);
       setVolunteerToDelete(null);
+      alert('Voluntário excluído com sucesso!');
     } catch (error) {
       console.error('Erro ao excluir:', error);
       alert('Erro ao excluir.');
@@ -162,7 +164,7 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? <p>Carregando...</p> : volunteers.filter(v => v.active !== false && v.name.toLowerCase().includes(searchTerm.toLowerCase())).map((v) => (
-          <div key={v.id} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative group hover:shadow-md transition-shadow">
+          <div key={v.id} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative group hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
             <div className="flex justify-between items-start mb-4">
               {/* Foto Miniatura */}
               <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden border-2 border-white shadow-sm">
@@ -215,8 +217,8 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
       </div>
 
       {
-        isModalOpen && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex justify-center p-4 overflow-y-auto">
+        isModalOpen && createPortal(
+          <div className="fixed top-0 left-0 w-full h-full bg-slate-900/60 backdrop-blur-md z-[9999] flex justify-center p-4 overflow-y-auto">
             <div className="bg-white rounded-3xl w-full max-w-2xl p-8 shadow-2xl animate-in fade-in zoom-in duration-300 mt-10 mb-10 h-fit">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-slate-800">{isEditMode ? 'Editar Voluntário' : 'Novo Voluntário'}</h2>
@@ -521,12 +523,13 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-all">Cancelar</button>
-                  <button type="submit" className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-green-100 hover:bg-green-800 transition-all">Salvar Voluntário</button>
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all text-center">Cancelar</button>
+                  <button type="submit" className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl shadow-lg shadow-green-100 hover:bg-green-800 transition-all text-center">Salvar Voluntário</button>
                 </div>
               </form>
             </div>
-          </div >
+          </div>,
+          document.body
         )
       }
 
@@ -538,8 +541,8 @@ const VolunteerManagement: React.FC<VolunteerManagementProps> = ({ volunteers: p
               <h3 className="text-lg font-bold text-slate-800 text-center mb-2">Excluir Voluntário?</h3>
               <p className="text-center text-slate-500 text-sm mb-6">Tem certeza que deseja excluir <b>{volunteerToDelete?.name}</b>?</p>
               <div className="flex gap-3">
-                <button onClick={() => setDeleteModalOpen(false)} className="flex-1 px-4 py-2 rounded-xl border">Cancelar</button>
-                <button onClick={handleDelete} className="flex-1 bg-red-600 text-white rounded-xl py-2">Excluir</button>
+                <button onClick={() => setDeleteModalOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-all text-center">Cancelar</button>
+                <button onClick={handleDelete} className="flex-1 bg-red-600 text-white rounded-xl py-2.5 shadow-lg shadow-red-100 hover:bg-red-700 transition-all text-center">Excluir</button>
               </div>
             </div>
           </div>

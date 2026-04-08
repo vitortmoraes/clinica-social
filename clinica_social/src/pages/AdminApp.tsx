@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/organisms/Sidebar';
 import Dashboard from './Dashboard';
@@ -9,13 +8,14 @@ import AdminSettings from './AdminSettings';
 import FinancialManagement from './FinancialManagement';
 import Reports from './Reports';
 import LoginView from './LoginView';
-import { MOCK_PATIENTS, MOCK_VOLUNTEERS, MOCK_APPOINTMENTS } from '../constants';
 import { Patient, Volunteer, Appointment, User, Role } from '../types';
 import { api } from '../services/api';
+import './AdminApp.css';
 
 const AdminApp: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -111,18 +111,32 @@ const AdminApp: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="admin-layout">
       <Sidebar
         currentView={currentView}
         setCurrentView={setCurrentView}
         user={user}
         onLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
       />
-      <main className="flex-1 ml-64 p-10 animate-in fade-in duration-500">
-        <div className="max-w-6xl mx-auto">
+      
+      <div className="admin-main">
+        <header className="mobile-header">
+          <div className="mobile-header-content">
+             <button onClick={() => setIsSidebarOpen(true)} className="hamburger-btn">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+             </button>
+             <h1 className="mobile-title">Clínica Cuidar</h1>
+          </div>
+        </header>
+
+        <main className="admin-content">
           {renderView()}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
